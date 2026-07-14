@@ -1,27 +1,51 @@
-// Vercel Serverless entry point - imports the full Express app
-// This file wraps server/index.js for Vercel serverless deployment
-
 require('dotenv').config();
-const express    = require('express');
-const cors       = require('cors');
-const path       = require('path');
-const jwt        = require('jsonwebtoken');
-const bcrypt     = require('bcryptjs');
-const connectDB  = require('../server/db');
-const Product    = require('../server/models/Product');
-const Enquiry    = require('../server/models/Enquiry');
+const express   = require('express');
+const cors      = require('cors');
+const jwt       = require('jsonwebtoken');
+const mongoose  = require('mongoose');
 
 const app = express();
 
-// ── Connect MongoDB ─────────────────────────────────────────────────────────
-connectDB();
-
-// ── Middleware ──────────────────────────────────────────────────────────────
+// ── Middleware ────────────────────────────────────────────────────────────────
 app.use(cors({ origin: '*' }));
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
-// ── Auth Middleware ─────────────────────────────────────────────────────────
+// ── MongoDB Connection (cached for serverless) ────────────────────────────────
+let isConnected = false;
+async function connectDB() {
+  if (isConnected) return;
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, { serverSelectionTimeoutMS: 10000 });
+    isConnected = true;
+    console.log('✅ MongoDB Connected');
+  } catch (err) {
+    console.error('❌ MongoDB Error:', err.message);
+    throw err; // Don't call process.exit in serverless!
+  }
+}
+
+// ── Schemas ───────────────────────────────────────────────────────────────────
+const ProductSchema = new mongoose.Schema({
+  name: String, cat: String, price: String, moq: String,
+  material: String, sizes: String, colors: String, cert: String,
+  desc: String, features: String, applications: String,
+  status: { type: String, default: 'active' },
+  imgBase64: { type: String, default: '' },
+  img: { type: String, default: '' },
+}, { timestamps: true });
+
+const EnquirySchema = new mongoose.Schema({
+  type: String, name: String, company: String, phone: String,
+  email: String, product: String, qty: String, msg: String,
+  unread: { type: Boolean, default: true },
+  time: String,
+}, { timestamps: true });
+
+const Product = mongoose.models.Product || mongoose.model('Product', ProductSchema);
+const Enquiry = mongoose.models.Enquiry || mongoose.model('Enquiry', EnquirySchema);
+
+// ── Auth Middleware ────────────────────────────────────────────────────────────
 function authMiddleware(req, res, next) {
   const token = req.headers['authorization']?.split(' ')[1];
   if (!token) return res.status(401).json({ error: 'No token provided' });
@@ -33,8 +57,14 @@ function authMiddleware(req, res, next) {
   }
 }
 
-// ── Auth Routes ─────────────────────────────────────────────────────────────
-app.post('/api/auth/login', async (req, res) => {
+// ── Connect before every request ─────────────────────────────────────────────
+app.use(async (req, res, next) => {
+  try { await connectDB(); next(); }
+  catch (err) { res.status(500).json({ error: 'Database connection failed: ' + err.message }); }
+});
+
+// ── Auth Routes ───────────────────────────────────────────────────────────────
+app.post('/api/auth/login', (req, res) => {
   const { adminId, password } = req.body;
   const ADMIN_ID  = process.env.ADMIN_ID  || 'STAR0010';
   const ADMIN_PWD = process.env.ADMIN_PWD || 'Star@@@0909';
@@ -46,7 +76,7 @@ app.post('/api/auth/login', async (req, res) => {
 
 app.post('/api/auth/logout', (req, res) => res.json({ message: 'Logged out' }));
 
-// ── Products Routes ─────────────────────────────────────────────────────────
+// ── Products ─────────────────────────────────────────────────────────────────
 app.get('/api/products', async (req, res) => {
   try {
     const products = await Product.find({ status: 'active' }).sort({ createdAt: -1 });
@@ -92,10 +122,10 @@ app.delete('/api/products/:id', authMiddleware, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// ── Enquiries Routes ────────────────────────────────────────────────────────
+// ── Enquiries ─────────────────────────────────────────────────────────────────
 app.post('/api/enquiries', async (req, res) => {
   try {
-    const enquiry = new Enquiry({ ...req.body, unread: true });
+    const enquiry = new Enquiry({ ...req.body, unread: true, time: new Date().toLocaleString('en-IN') });
     await enquiry.save();
     res.status(201).json(enquiry);
   } catch (err) { res.status(400).json({ error: err.message }); }
@@ -129,7 +159,7 @@ app.delete('/api/enquiries', authMiddleware, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// ── Stats ───────────────────────────────────────────────────────────────────
+// ── Stats ─────────────────────────────────────────────────────────────────────
 app.get('/api/stats', authMiddleware, async (req, res) => {
   try {
     const [totalProducts, totalEnquiries, unreadEnquiries] = await Promise.all([
@@ -141,8 +171,8 @@ app.get('/api/stats', authMiddleware, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// ── Health check ─────────────────────────────────────────────────────────────
-app.get('/api/health', (req, res) => res.json({ status: 'OK', time: new Date() }));
+// ── Health ────────────────────────────────────────────────────────────────────
+app.get('/api/health', (req, res) => res.json({ status: 'OK', time: new Date(), db: isConnected ? 'connected' : 'disconnected' }));
 
-// ── Export for Vercel Serverless ─────────────────────────────────────────────
+// ── Export for Vercel ─────────────────────────────────────────────────────────
 module.exports = app;
