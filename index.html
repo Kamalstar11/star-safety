@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>STAR SAFETY | Premium Industrial Safety Equipment – Delhi, India</title>
+  <meta name="description" content="STAR SAFETY is India's trusted manufacturer and supplier of industrial safety equipment – PVC Rainwear, Safety Helmets, Gloves, Reflective Jackets, Safety Shoes, and PPE. Bulk orders, OEM manufacturing, PAN India delivery."/>
+  <meta name="keywords" content="industrial safety equipment, PVC rainwear, safety helmet, safety gloves, PPE manufacturer India, reflective jacket, safety shoes Delhi"/>
+  <meta property="og:title" content="STAR SAFETY | Industrial Safety Equipment Manufacturer"/>
+  <meta property="og:description" content="Premium PPE manufacturer in Delhi – PVC Rainwear, Safety Helmets, Gloves, Reflective Jackets. Bulk orders welcome."/>
+  <meta property="og:type" content="website"/>
+  <script src="./api-client.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy:  '#0B1F3A',
+            navyL: '#132847',
+            yellow:'#FFC107',
+            yellowD:'#E6AC00',
+          },
+          fontFamily: { sans: ['"Hanken Grotesk"','sans-serif'] },
+        }
+      }
+    }
+  </script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Hanken Grotesk',sans-serif;background:#f3f4f6;color:#0B1F3A;}
+    /* NAV */
+    .glass-nav{background:rgba(255,255,255,0.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.4);}
+    /* HERO */
+    .hero-bg{background:linear-gradient(110deg,rgba(11,31,58,.95) 45%,rgba(11,31,58,.55) 100%),url('./hero.png') center/cover no-repeat;min-height:100vh;}
+    /* TRANSITIONS */
+    .tr{transition:all .28s cubic-bezier(.4,0,.2,1);}
+    /* COUNTER */
+    .counter-num{font-size:2.8rem;font-weight:900;line-height:1;}
+    /* PRODUCT CARD */
+    .prod-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(11,31,58,.08);transition:transform .28s ease,box-shadow .28s ease;}
+    .prod-card:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(11,31,58,.15);}
+    .prod-card img{width:100%;height:220px;object-fit:contain;padding:24px;background:#f8f9fb;transition:transform .4s ease;}
+    .prod-card:hover img{transform:scale(1.06);}
+    /* SCROLLBAR */
+    ::-webkit-scrollbar{width:6px;} ::-webkit-scrollbar-track{background:#f1f1f1;} ::-webkit-scrollbar-thumb{background:#0B1F3A;border-radius:4px;}
+    /* LIGHTBOX */
+    #lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center;flex-direction:column;}
+    #lightbox.open{display:flex;}
+    #lightbox img{max-width:90vw;max-height:80vh;border-radius:12px;box-shadow:0 0 60px rgba(0,0,0,.5);}
+    /* PROGRESS BAR */
+    #progress-bar{position:fixed;top:0;left:0;height:3px;background:#FFC107;z-index:9999;transition:width .1s linear;width:0%;}
+    /* MOBILE MENU */
+    #mobile-menu{display:none;position:fixed;inset:0;background:rgba(11,31,58,.97);z-index:900;flex-direction:column;align-items:center;justify-content:center;gap:32px;}
+    #mobile-menu.open{display:flex;}
+    #mobile-menu a{color:#fff;font-size:1.6rem;font-weight:700;text-decoration:none;transition:color .2s;}
+    #mobile-menu a:hover{color:#FFC107;}
+    /* QUOTE MODAL */
+    #quote-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:8000;align-items:center;justify-content:center;}
+    #quote-modal.open{display:flex;}
+    #quote-box{background:#fff;border-radius:20px;padding:40px;width:100%;max-width:520px;position:relative;}
+    /* TOAST */
+    #toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(80px);background:#0B1F3A;color:#FFC107;padding:14px 32px;border-radius:50px;font-weight:700;z-index:9999;transition:transform .4s ease;pointer-events:none;}
+    #toast.show{transform:translateX(-50%) translateY(0);}
+    /* SEARCH BAR */
+    #search-results{position:absolute;top:100%;left:0;right:0;background:#fff;border-radius:0 0 12px 12px;box-shadow:0 8px 32px rgba(11,31,58,.12);z-index:100;max-height:260px;overflow-y:auto;display:none;}
+    #search-results.open{display:block;}
+    /* BACK TO TOP */
+    #back-top{position:fixed;bottom:120px;right:24px;background:#0B1F3A;color:#FFC107;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.25);z-index:200;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+    #back-top.visible{opacity:1;pointer-events:all;}
+    /* FAQ */
+    .faq-body{max-height:0;overflow:hidden;transition:max-height .35s ease;}
+    .faq-body.open{max-height:400px;}
+    /* SCROLL REVEAL */
+    .reveal{opacity:0;transform:translateY(32px);transition:opacity .6s ease,transform .6s ease;}
+    .reveal.visible{opacity:1;transform:none;}
+  </style>
+</head>
+<body>
+
+<!-- Scroll Progress Bar -->
+<div id="progress-bar"></div>
+
+<!-- STICKY NAV -->
+<nav class="glass-nav fixed w-full z-50 top-0 left-0 shadow-sm">
+  <div class="max-w-7xl mx-auto px-5 h-[70px] flex items-center justify-between gap-4">
+    <!-- Logo -->
+    <a href="#" class="text-[1.5rem] font-black tracking-tight text-navy shrink-0">STAR<span class="text-yellow">SAFETY</span></a>
+
+    <!-- Desktop Links -->
+    <div class="hidden lg:flex items-center gap-7 font-semibold text-sm text-navy">
+      <a href="#home"         class="hover:text-yellow tr">Home</a>
+      <a href="#catalog"      class="hover:text-yellow tr">Catalog</a>
+      <a href="#industries"   class="hover:text-yellow tr">Industries</a>
+      <a href="#about"        class="hover:text-yellow tr">About Us</a>
+      <a href="#testimonials" class="hover:text-yellow tr">Reviews</a>
+      <a href="#faq"          class="hover:text-yellow tr">FAQ</a>
+      <a href="#contact"      class="hover:text-yellow tr">Contact</a>
+    </div>
+
+    <!-- Search + CTA -->
+    <div class="hidden lg:flex items-center gap-3">
+      <div class="relative">
+        <input id="nav-search" type="text" placeholder="Search products…"
+          class="border border-gray-200 rounded-full px-4 py-2 text-sm w-52 focus:outline-none focus:border-yellow focus:ring-2 focus:ring-yellow/30 tr" autocomplete="off"/>
+        <div id="search-results"></div>
+      </div>
+      <button onclick="openQuote()" class="bg-navy text-white px-5 py-2 rounded-full font-bold text-sm hover:bg-yellow hover:text-navy tr shadow">Get Quote</button>
+      <a href="tel:+918796504046"  class="bg-yellow text-navy px-5 py-2 rounded-full font-bold text-sm hover:bg-yellowD tr shadow">📞 +91 8796504046</a>
+    </div>
+
+    <!-- Hamburger -->
+    <button id="hamburger" class="lg:hidden flex flex-col gap-[5px] p-2" onclick="toggleMenu()">
+      <span class="block w-6 h-[2px] bg-navy tr"></span>
+      <span class="block w-6 h-[2px] bg-navy tr"></span>
+      <span class="block w-6 h-[2px] bg-navy tr"></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div id="mobile-menu">
+  <button onclick="toggleMenu()" style="position:absolute;top:24px;right:24px;background:#FFC107;color:#0B1F3A;border:none;border-radius:50%;width:40px;height:40px;font-size:1.4rem;cursor:pointer;font-weight:900;">✕</button>
+  <a href="#home"         onclick="toggleMenu()">Home</a>
+  <a href="#catalog"      onclick="toggleMenu()">Catalog</a>
+  <a href="#industries"   onclick="toggleMenu()">Industries</a>
+  <a href="#about"        onclick="toggleMenu()">About Us</a>
+  <a href="#contact"      onclick="toggleMenu()">Contact</a>
+  <a href="tel:+918796504046" style="color:#FFC107;">📞 +91 87965 04046</a>
+</div>
+
+<!-- HERO -->
+<section id="home" class="hero-bg flex items-center pt-[70px]">
+  <div class="max-w-7xl mx-auto px-6 w-full py-28">
+    <div class="max-w-2xl">
+      <span class="text-yellow font-bold tracking-widest uppercase text-xs mb-5 block">ISO Certified • OEM Manufacturing • PAN India Delivery</span>
+      <h1 class="text-5xl md:text-[4.2rem] font-black text-white leading-[1.1] mb-6">
+        India's Trusted<br/><span class="text-yellow">Industrial Safety</span><br/>Equipment Manufacturer
+      </h1>
+      <p class="text-gray-300 text-lg mb-10 leading-relaxed max-w-xl">
+        Premium PVC Rainwear, Safety Helmets, Gloves, Reflective Jackets &amp; PPE. Bulk orders, OEM manufacturing, and 24/7 support. Protecting every worker across every industry.
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a href="#catalog"  class="bg-yellow text-navy px-8 py-4 rounded-xl font-bold text-base hover:bg-white tr shadow-lg">Explore Catalog →</a>
+        <button onclick="openQuote()" class="border-2 border-white text-white px-8 py-4 rounded-xl font-bold text-base hover:bg-white hover:text-navy tr">Request Bulk Quote</button>
+      </div>
+      <!-- Trust badges -->
+      <div class="mt-12 flex flex-wrap gap-3">
+        <span class="bg-white/10 border border-white/20 text-white rounded-full px-4 py-2 text-sm font-semibold backdrop-blur-sm">✓ ISO Quality</span>
+        <span class="bg-white/10 border border-white/20 text-white rounded-full px-4 py-2 text-sm font-semibold backdrop-blur-sm">✓ Bulk Orders</span>
+        <span class="bg-white/10 border border-white/20 text-white rounded-full px-4 py-2 text-sm font-semibold backdrop-blur-sm">✓ OEM Manufacturing</span>
+        <span class="bg-white/10 border border-white/20 text-white rounded-full px-4 py-2 text-sm font-semibold backdrop-blur-sm">✓ PAN India Supply</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="bg-navy text-white py-14">
+  <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+    <div>
+      <div class="counter-num text-yellow" data-target="500">0</div>
+      <div class="text-gray-400 mt-1 font-medium">Products</div>
+    </div>
+    <div>
+      <div class="counter-num text-yellow" data-target="1000">0</div>
+      <div class="text-gray-400 mt-1 font-medium">Business Clients</div>
+    </div>
+    <div>
+      <div class="counter-num text-yellow" data-target="50">0</div>
+      <div class="text-gray-400 mt-1 font-medium">Cities Served</div>
+    </div>
+    <div>
+      <div class="counter-num text-yellow" data-target="10">0</div>
+      <div class="text-gray-400 mt-1 font-medium">Years Experience</div>
+    </div>
+  </div>
+</section>
+
+<!-- CATALOG -->
+<section id="catalog" class="py-24 bg-white">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-4 reveal">
+      <span class="text-yellow font-bold uppercase tracking-widest text-xs">Our Products</span>
+    </div>
+    <h2 class="text-4xl font-black text-navy text-center mb-4 reveal">Enterprise Safety Catalog</h2>
+    <p class="text-gray-500 text-center max-w-2xl mx-auto mb-10 reveal">High-quality industrial PPE manufactured to international standards. Suitable for bulk procurement and OEM requirements.</p>
+
+    <!-- FILTERS -->
+    <div class="flex flex-wrap justify-center gap-3 mb-12 reveal" id="filter-bar">
+      <button onclick="filterProducts('all')"        class="filter-btn active-filter px-5 py-2 rounded-full border-2 border-navy bg-navy text-white font-semibold text-sm tr">All Products</button>
+      <button onclick="filterProducts('rainwear')"   class="filter-btn px-5 py-2 rounded-full border-2 border-navy text-navy font-semibold text-sm hover:bg-navy hover:text-white tr">Rainwear</button>
+      <button onclick="filterProducts('head')"       class="filter-btn px-5 py-2 rounded-full border-2 border-navy text-navy font-semibold text-sm hover:bg-navy hover:text-white tr">Head Protection</button>
+      <button onclick="filterProducts('hands')"      class="filter-btn px-5 py-2 rounded-full border-2 border-navy text-navy font-semibold text-sm hover:bg-navy hover:text-white tr">Hand Protection</button>
+      <button onclick="filterProducts('visibility')" class="filter-btn px-5 py-2 rounded-full border-2 border-navy text-navy font-semibold text-sm hover:bg-navy hover:text-white tr">High Visibility</button>
+      <button onclick="filterProducts('foot')"       class="filter-btn px-5 py-2 rounded-full border-2 border-navy text-navy font-semibold text-sm hover:bg-navy hover:text-white tr">Foot Protection</button>
+      <button onclick="filterProducts('respiratory')" class="filter-btn px-5 py-2 rounded-full border-2 border-navy text-navy font-semibold text-sm hover:bg-navy hover:text-white tr">Respiratory</button>
+    </div>
+
+    <!-- PRODUCT GRID -->
+    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+      <div class="prod-card" data-cat="rainwear">
+        <img src="./images/pvc_rainsuit.png" alt="PVC Rain Suit" loading="lazy"/>
+        <div class="p-6">
+          <span class="text-xs font-bold text-yellow uppercase tracking-wider">Rainwear</span>
+          <h3 class="text-xl font-bold text-navy mt-1 mb-2">PVC Rain Suit</h3>
+          <p class="text-gray-500 text-sm mb-3">Heavy-duty 0.35mm PVC + polyester. 100% waterproof with heat-sealed seams. Sizes M–3XL.</p>
+          <div class="flex flex-wrap gap-1 mb-4">
+            <span class="bg-gray-100 text-navy text-xs px-2 py-1 rounded">Waterproof</span>
+            <span class="bg-gray-100 text-navy text-xs px-2 py-1 rounded">ISO Grade</span>
+            <span class="bg-gray-100 text-navy text-xs px-2 py-1 rounded">MOQ: 50 pcs</span>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="openQuote('PVC Rain Suit')" class="flex-1 bg-navy text-white py-2.5 rounded-lg font-semibold text-sm hover:bg-yellow hover:text-navy tr">Get Quote</button>
+            <a href="https://wa.me/918796504046?text=Hello%20Star%20Safety%2C%20I%20am%20interested%20in%20PVC%20Rain%20Suit" target="_blank"
+               class="bg-[#25D366] text-white px-3 py-2.5 rounded-lg font-bold text-sm hover:opacity-90 tr">WhatsApp</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="prod-card" data-cat="head">
+        <img src="./images/safety_helmet.png" alt="Safety Helmet" loading="lazy"/>
+        <div class="p-6">
+          <span class="text-xs font-bold text-yellow uppercase tracking-wider">Head Protection</span>
+          <h3 class="text-xl font-bold text-navy mt-1 mb-2">Industrial Safety Helmet</h3>
+          <p class="text-gray-500 text-sm mb-3">High-impact HDPE shell with 6-point ratchet suspension. EN397 certified. Available in 6 colours.</p>
+          <div class="flex flex-wrap gap-1 mb-4">
+            <span class="bg-gray-100 text-navy text-xs px-2 py-1 rounded">EN397</span>
+            <span class="bg-gray-100 text-navy text-xs px-2 py-1 rounded">Ratchet System</span>
+            <span class="bg-gray-100 text-navy text-xs px-2 py-1 rounded">MOQ: 100 pcs</span>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="openQuote('Industrial Safety Helmet')" class="flex-1 bg-navy text-white py-2.5 rounded-lg font-semibold text-sm hover:bg-yellow hover:text-navy tr">Get Quote</button>
+            <a href="https://wa.me/918796504046?text=Hello%20Star%20Safety%2C%20I%20am%20interested%20in%20Safety%20Helmet" target="_blank"
+               class="bg-[#25D366] text-white px-3 py-2.5 rounded-lg font-bold text-sm hover:opacity-90 tr">WhatsApp</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="prod-card" data-cat="hands">
+        <img src="./images/safety_gloves.png" alt="Safety Gloves" loading="lazy"/>
+        <div class="p-6">
+          <span class="text-xs font-bold text-yellow uppercase tracking-wider">Hand Protection</span>
+          <h3 class="text-xl font-bold text-navy mt-1 mb-2">Industrial Safety Gloves</h3>
+          <p class="text-gray-500 text-sm mb-3">Cut-resistant Level 4, chemical &amp; anti-vibration. PVC grip coating. Sizes S–XXL.</p>
+          <div class="flex flex-wrap gap-1 mb-4">
+            <span class="bg-gray-100 text-navy text-xs px-2 py-1 rounded">Cut Level 4</span>
+            <span class="bg-gray-100 text-navy text-xs px-2 py-1 rounded">Chemical Resistant</span>
+            <span class="bg-gray-100 text-navy text-xs px-2 py-1 rounded">MOQ: 200 pcs</span>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="openQuote('Industrial Safety Gloves')" class="flex-1 bg-navy text-white py-2.5 rounded-lg font-semibold text-sm hover:bg-yellow hover:text-navy tr">Get Quote</button>
+            <a href="https://wa.me/918796504046?text=Hello%20Star%20Safety%2C%20I%20am%20interested%20in%20Safety%20Gloves" target="_blank"
+               class="bg-[#25D366] text-white px-3 py-2.5 rounded-lg font-bold text-sm hover:opacity-90 tr">WhatsApp</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="prod-card" data-cat="visibility">
+        <img src="./images/reflective_jacket.png" alt="Reflective Jacket" loading="lazy"/>
+        <div class="p-6">
+          <span class="text-xs font-bold text-yellow uppercase tracking-wider">High Visibility</span>
+          <h3 class="text-xl font-bold text-navy mt-1 mb-2">Reflective Safety Jacket</h3>
+          <p class="text-gray-500 text-sm mb-3">Class 2 EN ISO 20471 certified. 3M™ Scotchlite reflective strips, polyester mesh body.</p>
+          <div class="flex flex-wrap gap-1 mb-4">
+            <span class="bg-gray-100 text-navy text-xs px-2 py-1 rounded">EN ISO 20471</span>
+            <span class="bg-gray-100 text-navy text-xs px-2 py-1 rounded">3M Reflective</span>
+            <span class="bg-gray-100 text-navy text-xs px-2 py-1 rounded">MOQ: 50 pcs</span>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="openQuote('Reflective Safety Jacket')" class="flex-1 bg-navy text-white py-2.5 rounded-lg font-semibold text-sm hover:bg-yellow hover:text-navy tr">Get Quote</button>
+            <a href="https://wa.me/918796504046?text=Hello%20Star%20Safety%2C%20I%20am%20interested%20in%20Reflective%20Safety%20Jacket" target="_blank"
+               class="bg-[#25D366] text-white px-3 py-2.5 rounded-lg font-bold text-sm hover:opacity-90 tr">WhatsApp</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="prod-card" data-cat="foot">
+        <img src="./images/safety_shoes.png" alt="Safety Shoes" loading="lazy"/>
+        <div class="p-6">
+          <span class="text-xs font-bold text-yellow uppercase tracking-wider">Foot Protection</span>
+          <h3 class="text-xl font-bold text-navy mt-1 mb-2">Steel Toe Safety Shoes</h3>
+          <p class="text-gray-500 text-sm mb-3">200J steel toe cap, anti-puncture midsole, oil &amp; slip resistant rubber sole. IS 15298 certified.</p>
+          <div class="flex flex-wrap gap-1 mb-4">
+            <span class="bg-gray-100 text-navy text-xs px-2 py-1 rounded">200J Toe Cap</span>
+            <span class="bg-gray-100 text-navy text-xs px-2 py-1 rounded">IS 15298</span>
+            <span class="bg-gray-100 text-navy text-xs px-2 py-1 rounded">MOQ: 50 pairs</span>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="openQuote('Steel Toe Safety Shoes')" class="flex-1 bg-navy text-white py-2.5 rounded-lg font-semibold text-sm hover:bg-yellow hover:text-navy tr">Get Quote</button>
+            <a href="https://wa.me/918796504046?text=Hello%20Star%20Safety%2C%20I%20am%20interested%20in%20Safety%20Shoes" target="_blank"
+               class="bg-[#25D366] text-white px-3 py-2.5 rounded-lg font-bold text-sm hover:opacity-90 tr">WhatsApp</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="prod-card" data-cat="respiratory">
+        <img src="./images/respirator_mask.png" alt="Respirator Mask" loading="lazy"/>
+        <div class="p-6">
+          <span class="text-xs font-bold text-yellow uppercase tracking-wider">Respiratory</span>
+          <h3 class="text-xl font-bold text-navy mt-1 mb-2">Industrial Respirator</h3>
+          <p class="text-gray-500 text-sm mb-3">N95 / FFP2 certified half-face mask. Filters dust, fumes and aerosols. Reusable with replaceable filters.</p>
+          <div class="flex flex-wrap gap-1 mb-4">
+            <span class="bg-gray-100 text-navy text-xs px-2 py-1 rounded">N95 / FFP2</span>
+            <span class="bg-gray-100 text-navy text-xs px-2 py-1 rounded">Reusable</span>
+            <span class="bg-gray-100 text-navy text-xs px-2 py-1 rounded">MOQ: 100 pcs</span>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="openQuote('Industrial Respirator')" class="flex-1 bg-navy text-white py-2.5 rounded-lg font-semibold text-sm hover:bg-yellow hover:text-navy tr">Get Quote</button>
+            <a href="https://wa.me/918796504046?text=Hello%20Star%20Safety%2C%20I%20am%20interested%20in%20Industrial%20Respirator" target="_blank"
+               class="bg-[#25D366] text-white px-3 py-2.5 rounded-lg font-bold text-sm hover:opacity-90 tr">WhatsApp</a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end grid -->
+  </div>
+</section>
+
+<!-- INDUSTRIES -->
+<section id="industries" class="py-24 bg-[#f3f4f6]">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-14 reveal">
+      <span class="text-yellow font-bold uppercase tracking-widest text-xs">Who We Serve</span>
+      <h2 class="text-4xl font-black text-navy mt-2 mb-3">Industries We Protect</h2>
+      <p class="text-gray-500 max-w-xl mx-auto">Tailored PPE solutions for the world's most demanding and hazardous environments.</p>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+      <div class="bg-white rounded-2xl p-6 text-center group hover:bg-navy tr cursor-default shadow-sm hover:shadow-xl">
+        <div class="text-4xl mb-3">🏗️</div>
+        <h4 class="font-bold text-navy group-hover:text-white tr">Construction</h4>
+      </div>
+      <div class="bg-white rounded-2xl p-6 text-center group hover:bg-navy tr cursor-default shadow-sm hover:shadow-xl">
+        <div class="text-4xl mb-3">⛏️</div>
+        <h4 class="font-bold text-navy group-hover:text-white tr">Mining</h4>
+      </div>
+      <div class="bg-white rounded-2xl p-6 text-center group hover:bg-navy tr cursor-default shadow-sm hover:shadow-xl">
+        <div class="text-4xl mb-3">🛢️</div>
+        <h4 class="font-bold text-navy group-hover:text-white tr">Oil &amp; Gas</h4>
+      </div>
+      <div class="bg-white rounded-2xl p-6 text-center group hover:bg-navy tr cursor-default shadow-sm hover:shadow-xl">
+        <div class="text-4xl mb-3">⚗️</div>
+        <h4 class="font-bold text-navy group-hover:text-white tr">Chemical Plants</h4>
+      </div>
+      <div class="bg-white rounded-2xl p-6 text-center group hover:bg-navy tr cursor-default shadow-sm hover:shadow-xl">
+        <div class="text-4xl mb-3">🌾</div>
+        <h4 class="font-bold text-navy group-hover:text-white tr">Agriculture</h4>
+      </div>
+      <div class="bg-white rounded-2xl p-6 text-center group hover:bg-navy tr cursor-default shadow-sm hover:shadow-xl">
+        <div class="text-4xl mb-3">🏭</div>
+        <h4 class="font-bold text-navy group-hover:text-white tr">Manufacturing</h4>
+      </div>
+      <div class="bg-white rounded-2xl p-6 text-center group hover:bg-navy tr cursor-default shadow-sm hover:shadow-xl">
+        <div class="text-4xl mb-3">🚢</div>
+        <h4 class="font-bold text-navy group-hover:text-white tr">Marine</h4>
+      </div>
+      <div class="bg-white rounded-2xl p-6 text-center group hover:bg-navy tr cursor-default shadow-sm hover:shadow-xl">
+        <div class="text-4xl mb-3">🚗</div>
+        <h4 class="font-bold text-navy group-hover:text-white tr">Automobile</h4>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="py-24 bg-white">
+  <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+    <div class="reveal">
+      <span class="text-yellow font-bold uppercase tracking-widest text-xs">About Star Safety</span>
+      <h2 class="text-4xl font-black text-navy mt-3 mb-6">A Decade of Protecting Workers Across India</h2>
+      <p class="text-gray-600 mb-4 leading-relaxed">Founded in Delhi, STAR SAFETY has grown to become one of India's most trusted industrial safety equipment manufacturers. We specialize in PVC Rainwear, PPE kits, Safety Footwear, Helmets, and a comprehensive range of protective gear.</p>
+      <p class="text-gray-600 mb-6 leading-relaxed">Our manufacturing facility operates under strict ISO quality controls, ensuring every product meets or exceeds BIS, EN, and IS certification standards before it leaves our factory floor.</p>
+      <div class="grid grid-cols-2 gap-4 mb-8">
+        <div class="bg-[#f3f4f6] rounded-xl p-5">
+          <div class="text-2xl font-black text-navy">ISO</div>
+          <div class="text-gray-500 text-sm mt-1">Quality Certified</div>
+        </div>
+        <div class="bg-[#f3f4f6] rounded-xl p-5">
+          <div class="text-2xl font-black text-navy">MSME</div>
+          <div class="text-gray-500 text-sm mt-1">Registered Enterprise</div>
+        </div>
+        <div class="bg-[#f3f4f6] rounded-xl p-5">
+          <div class="text-2xl font-black text-navy">BIS</div>
+          <div class="text-gray-500 text-sm mt-1">Standard Compliant</div>
+        </div>
+        <div class="bg-[#f3f4f6] rounded-xl p-5">
+          <div class="text-2xl font-black text-navy">24/7</div>
+          <div class="text-gray-500 text-sm mt-1">Customer Support</div>
+        </div>
+      </div>
+      <button onclick="openQuote()" class="bg-navy text-white px-7 py-3.5 rounded-xl font-bold hover:bg-yellow hover:text-navy tr">Partner With Us →</button>
+    </div>
+    <!-- Certifications right side -->
+    <div class="reveal flex flex-col gap-4">
+      <div class="bg-navy text-white rounded-2xl p-8">
+        <h3 class="text-xl font-bold mb-2 text-yellow">Our Promise</h3>
+        <ul class="space-y-3 text-gray-300 text-sm">
+          <li>✅ 100% Quality Checked before dispatch</li>
+          <li>✅ Industrial-grade raw materials only</li>
+          <li>✅ Competitive bulk pricing &amp; OEM available</li>
+          <li>✅ Fast turnaround – PAN India delivery</li>
+          <li>✅ Dedicated account manager for bulk buyers</li>
+          <li>✅ Free samples available on request</li>
+        </ul>
+      </div>
+      <div class="bg-yellow rounded-2xl p-8">
+        <h3 class="text-xl font-bold text-navy mb-2">Bulk Order Ready</h3>
+        <p class="text-navy/80 text-sm mb-4">Minimum order quantities start from 50 units. Custom branding, private labeling &amp; OEM manufacturing available.</p>
+        <a href="tel:+918796504046" class="inline-block bg-navy text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-white hover:text-navy tr">📞 Call for Bulk Pricing</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials" class="py-24 bg-[#f3f4f6]">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-14 reveal">
+      <span class="text-yellow font-bold uppercase tracking-widest text-xs">Client Reviews</span>
+      <h2 class="text-4xl font-black text-navy mt-2">Trusted by Industry Leaders</h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white rounded-2xl p-8 shadow-sm reveal">
+        <div class="text-yellow text-xl mb-3">★★★★★</div>
+        <p class="text-gray-600 text-sm leading-relaxed mb-6">"STAR SAFETY has been supplying our entire construction fleet with PVC rainwear for 3 years. Consistently high quality, on-time delivery, and competitive bulk pricing. Highly recommended."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-navy flex items-center justify-center text-white font-bold">R</div>
+          <div><div class="font-bold text-navy text-sm">Rajesh Sharma</div><div class="text-gray-400 text-xs">Procurement Head, ABC Construction Ltd.</div></div>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl p-8 shadow-sm reveal">
+        <div class="text-yellow text-xl mb-3">★★★★★</div>
+        <p class="text-gray-600 text-sm leading-relaxed mb-6">"We ordered 500 safety helmets and 200 reflective jackets for our mining project. Quality was top-notch – every piece passed our internal safety inspection. Will reorder."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-navy flex items-center justify-center text-white font-bold">P</div>
+          <div><div class="font-bold text-navy text-sm">Priya Verma</div><div class="text-gray-400 text-xs">Safety Officer, XYZ Mining Corp.</div></div>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl p-8 shadow-sm reveal">
+        <div class="text-yellow text-xl mb-3">★★★★★</div>
+        <p class="text-gray-600 text-sm leading-relaxed mb-6">"Fast response, excellent product quality, and professional service. We have Star Safety as our approved PPE vendor. Their OEM service for branded gear is outstanding."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-navy flex items-center justify-center text-white font-bold">A</div>
+          <div><div class="font-bold text-navy text-sm">Amit Kapoor</div><div class="text-gray-400 text-xs">General Manager, PQR Petrochemicals</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="py-24 bg-white">
+  <div class="max-w-3xl mx-auto px-6">
+    <div class="text-center mb-14 reveal">
+      <span class="text-yellow font-bold uppercase tracking-widest text-xs">FAQs</span>
+      <h2 class="text-4xl font-black text-navy mt-2">Frequently Asked Questions</h2>
+    </div>
+    <div class="space-y-4" id="faq-container">
+      <div class="faq-item border border-gray-200 rounded-xl overflow-hidden">
+        <button class="faq-btn w-full text-left px-6 py-5 font-bold text-navy flex justify-between items-center bg-white hover:bg-[#f3f4f6] tr" onclick="toggleFaq(this)">
+          What is the minimum order quantity (MOQ)?
+          <span class="faq-icon text-yellow text-xl font-black">+</span>
+        </button>
+        <div class="faq-body px-6 pb-5 text-gray-600 text-sm leading-relaxed">
+          MOQ varies by product: PVC Rainwear starts at 50 units, Safety Helmets at 100 units, Gloves at 200 pairs, and Reflective Jackets at 50 units. Contact us for custom quantities and volume discounts.
+        </div>
+      </div>
+      <div class="faq-item border border-gray-200 rounded-xl overflow-hidden">
+        <button class="faq-btn w-full text-left px-6 py-5 font-bold text-navy flex justify-between items-center bg-white hover:bg-[#f3f4f6] tr" onclick="toggleFaq(this)">
+          Do you offer OEM / private labelling?
+          <span class="faq-icon text-yellow text-xl font-black">+</span>
+        </button>
+        <div class="faq-body px-6 pb-5 text-gray-600 text-sm leading-relaxed">
+          Yes! We offer complete OEM manufacturing and private label services. You can have your company logo, branding, and custom colours on all our products. Minimum order quantities apply for OEM orders.
+        </div>
+      </div>
+      <div class="faq-item border border-gray-200 rounded-xl overflow-hidden">
+        <button class="faq-btn w-full text-left px-6 py-5 font-bold text-navy flex justify-between items-center bg-white hover:bg-[#f3f4f6] tr" onclick="toggleFaq(this)">
+          Are your products certified?
+          <span class="faq-icon text-yellow text-xl font-black">+</span>
+        </button>
+        <div class="faq-body px-6 pb-5 text-gray-600 text-sm leading-relaxed">
+          All our products comply with relevant BIS (Bureau of Indian Standards), EN (European Norms), and IS standards. Helmets are EN397 certified, Safety Shoes are IS 15298 compliant, and our Rainwear meets EN 343 waterproof ratings.
+        </div>
+      </div>
+      <div class="faq-item border border-gray-200 rounded-xl overflow-hidden">
+        <button class="faq-btn w-full text-left px-6 py-5 font-bold text-navy flex justify-between items-center bg-white hover:bg-[#f3f4f6] tr" onclick="toggleFaq(this)">
+          Do you deliver across India?
+          <span class="faq-icon text-yellow text-xl font-black">+</span>
+        </button>
+        <div class="faq-body px-6 pb-5 text-gray-600 text-sm leading-relaxed">
+          Yes, we supply PAN India to 50+ cities. We use reputed logistics partners to ensure safe and timely delivery. Freight charges depend on order volume and destination – bulk orders often qualify for free shipping.
+        </div>
+      </div>
+      <div class="faq-item border border-gray-200 rounded-xl overflow-hidden">
+        <button class="faq-btn w-full text-left px-6 py-5 font-bold text-navy flex justify-between items-center bg-white hover:bg-[#f3f4f6] tr" onclick="toggleFaq(this)">
+          Can I get free samples before placing a bulk order?
+          <span class="faq-icon text-yellow text-xl font-black">+</span>
+        </button>
+        <div class="faq-body px-6 pb-5 text-gray-600 text-sm leading-relaxed">
+          Yes, free samples are available for genuine bulk buyers. Please contact us via WhatsApp or fill the enquiry form mentioning the products you need. Courier charges may apply for samples.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT + MAP -->
+<section id="contact" class="py-24 bg-[#f3f4f6]">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-14 reveal">
+      <span class="text-yellow font-bold uppercase tracking-widest text-xs">Get In Touch</span>
+      <h2 class="text-4xl font-black text-navy mt-2">Contact &amp; Location</h2>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+      <!-- LEFT: Info + Map -->
+      <div class="reveal">
+        <div class="bg-white rounded-2xl p-8 shadow-sm mb-6">
+          <h3 class="text-xl font-bold text-navy mb-6">Company Details</h3>
+          <div class="space-y-5">
+            <div class="flex items-start gap-4">
+              <span class="text-2xl">📍</span>
+              <div>
+                <div class="font-bold text-navy">Address</div>
+                <div class="text-gray-500 text-sm mt-1">Sardar Colony Rd, Pocket 7, Sector 16,<br/>Rohini, Delhi – 110089</div>
+                <a href="https://www.google.com/maps/place/Sector+16,+Rohini,+Delhi,+110089/@28.740324,77.1219184,19.81z/data=!4m6!3m5!1s0x390d0122c549825f:0x59bcbeb0583c61cc!8m2!3d28.7419484!4d77.1240672!16s%2Fg%2F12hlxvc3z?hl=en-US&entry=ttu&g_ep=EgoyMDI2MDcwOC4wIKXMDSoASAFQAw%3D%3D" target="_blank"
+                   class="text-yellow font-semibold text-xs mt-1 inline-block hover:underline">View on Google Maps →</a>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <span class="text-2xl">📞</span>
+              <div>
+                <div class="font-bold text-navy">Phone &amp; WhatsApp</div>
+                <a href="tel:+918796504046" class="text-gray-500 text-sm hover:text-yellow tr">+91 87965 04046</a>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <span class="text-2xl">✉️</span>
+              <div>
+                <div class="font-bold text-navy">Email</div>
+                <a href="mailto:info@starsafety.in" class="text-gray-500 text-sm hover:text-yellow tr">info@starsafety.in</a>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <span class="text-2xl">🕐</span>
+              <div>
+                <div class="font-bold text-navy">Working Hours</div>
+                <div class="text-gray-500 text-sm mt-1">Open 24 Hours, 7 Days a Week</div>
+              </div>
+            </div>
+          </div>
+          <div class="flex gap-3 mt-6">
+            <a href="tel:+918796504046"
+               class="flex-1 bg-navy text-white text-center py-3 rounded-xl font-bold text-sm hover:bg-yellow hover:text-navy tr">📞 Call Now</a>
+            <a href="https://wa.me/918796504046?text=Hello%20Star%20Safety%2C%20I%20am%20interested%20in%20your%20products." target="_blank"
+               class="flex-1 bg-[#25D366] text-white text-center py-3 rounded-xl font-bold text-sm hover:opacity-90 tr">💬 WhatsApp</a>
+          </div>
+        </div>
+
+        <!-- Google Maps Embed -->
+        <div class="rounded-2xl overflow-hidden shadow-sm">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d438.75580984568!2d77.12191839999999!3d28.740324!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d0122c549825f%3A0x59bcbeb0583c61cc!2sSector%2016%2C%20Rohini%2C%20Delhi%2C%20110089!5e0!3m2!1sen!2sin!4v1720000000000!5m2!1sen!2sin"
+            width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      </div>
+
+      <!-- RIGHT: Contact Form -->
+      <div class="reveal">
+        <div class="bg-navy rounded-2xl p-10 shadow-2xl relative overflow-hidden">
+          <div class="absolute -top-10 -right-10 w-48 h-48 bg-yellow rounded-full opacity-10 blur-3xl"></div>
+          <h3 class="text-2xl font-bold text-white mb-2 relative z-10">Send Us an Enquiry</h3>
+          <p class="text-gray-400 text-sm mb-8 relative z-10">We respond within 2 hours on WhatsApp. Fill in your details and we'll get back to you.</p>
+          <form id="contact-form" class="space-y-4 relative z-10" onsubmit="submitContactForm(event)">
+            <div class="grid grid-cols-2 gap-4">
+              <input type="text"  id="cf-fname" placeholder="First Name"     required class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow tr text-sm"/>
+              <input type="text"  id="cf-lname" placeholder="Last Name"      required class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow tr text-sm"/>
+            </div>
+            <input type="text"  id="cf-company"  placeholder="Company Name"  required class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow tr text-sm"/>
+            <input type="tel"   id="cf-phone"    placeholder="Mobile Number" required class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow tr text-sm"/>
+            <input type="email" id="cf-email"    placeholder="Email Address"          class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow tr text-sm"/>
+            <select id="cf-product" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-gray-300 focus:outline-none focus:border-yellow tr text-sm">
+              <option value="">Select Product of Interest</option>
+              <option>PVC Rain Suit</option>
+              <option>Industrial Safety Helmet</option>
+              <option>Safety Gloves</option>
+              <option>Reflective Safety Jacket</option>
+              <option>Steel Toe Safety Shoes</option>
+              <option>Industrial Respirator</option>
+              <option>Multiple Products / Full PPE Kit</option>
+            </select>
+            <textarea id="cf-msg" placeholder="Your Requirement (product, quantity, delivery state…)" rows="3" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-yellow tr text-sm resize-none"></textarea>
+            <button type="submit" class="w-full bg-yellow text-navy font-black text-base py-4 rounded-xl hover:bg-white tr shadow-lg">Submit Enquiry →</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-navy text-gray-400 pt-16 pb-8">
+  <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+    <div>
+      <div class="text-2xl font-black text-white mb-4">STAR<span class="text-yellow">SAFETY</span></div>
+      <p class="text-sm leading-relaxed mb-4">India's trusted industrial safety equipment manufacturer. Protecting every worker, every industry, every day.</p>
+      <div class="text-sm">📞 <a href="tel:+918796504046" class="hover:text-yellow tr">+91 87965 04046</a></div>
+      <div class="text-sm mt-1">✉️ <a href="mailto:info@starsafety.in" class="hover:text-yellow tr">info@starsafety.in</a></div>
+    </div>
+    <div>
+      <h4 class="text-white font-bold uppercase tracking-wider text-xs mb-5">Products</h4>
+      <ul class="space-y-3 text-sm">
+        <li><a href="#catalog" class="hover:text-yellow tr">PVC Rainwear</a></li>
+        <li><a href="#catalog" class="hover:text-yellow tr">Safety Helmets</a></li>
+        <li><a href="#catalog" class="hover:text-yellow tr">Safety Gloves</a></li>
+        <li><a href="#catalog" class="hover:text-yellow tr">Reflective Jackets</a></li>
+        <li><a href="#catalog" class="hover:text-yellow tr">Safety Shoes</a></li>
+        <li><a href="#catalog" class="hover:text-yellow tr">Respirators</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-white font-bold uppercase tracking-wider text-xs mb-5">Company</h4>
+      <ul class="space-y-3 text-sm">
+        <li><a href="#about"        class="hover:text-yellow tr">About Us</a></li>
+        <li><a href="#industries"   class="hover:text-yellow tr">Industries</a></li>
+        <li><a href="#testimonials" class="hover:text-yellow tr">Reviews</a></li>
+        <li><a href="#faq"          class="hover:text-yellow tr">FAQ</a></li>
+        <li><a href="#contact"      class="hover:text-yellow tr">Contact Us</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="text-white font-bold uppercase tracking-wider text-xs mb-5">Head Office</h4>
+      <p class="text-sm leading-relaxed mb-4">Sardar Colony Rd, Pocket 7,<br/>Sector 16, Rohini,<br/>Delhi – 110089</p>
+      <p class="text-sm">🕐 Open 24 Hours</p>
+      <a href="https://wa.me/918796504046?text=Hello%20Star%20Safety%2C%20I%20am%20interested%20in%20your%20products." target="_blank"
+         class="inline-block mt-4 bg-[#25D366] text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:opacity-90 tr">💬 WhatsApp Us</a>
+    </div>
+  </div>
+  <div class="max-w-7xl mx-auto px-6 border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+    <p>© 2026 STAR SAFETY. All Rights Reserved.</p>
+    <div class="flex gap-6">
+      <a href="#" class="hover:text-yellow tr">Privacy Policy</a>
+      <a href="#" class="hover:text-yellow tr">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<!-- FLOATING BUTTONS -->
+<a href="https://wa.me/918796504046?text=Hello%20Star%20Safety%2C%20I%20am%20interested%20in%20your%20products." target="_blank"
+   style="position:fixed;bottom:80px;right:22px;background:#25D366;color:#fff;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 4px 20px rgba(37,211,102,.5);z-index:500;text-decoration:none;transition:transform .2s;"
+   onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'" title="Chat on WhatsApp">💬</a>
+
+<a href="tel:+918796504046"
+   style="position:fixed;bottom:24px;right:22px;background:#0B1F3A;color:#FFC107;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 4px 20px rgba(11,31,58,.35);z-index:500;text-decoration:none;transition:transform .2s;"
+   onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'" title="Call Now">📞</a>
+
+<!-- BACK TO TOP -->
+<div id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- QUOTE MODAL -->
+<div id="quote-modal" onclick="if(event.target===this)closeQuote()">
+  <div id="quote-box">
+    <button onclick="closeQuote()" style="position:absolute;top:16px;right:16px;background:#0B1F3A;color:#FFC107;border:none;border-radius:50%;width:34px;height:34px;font-size:1.1rem;cursor:pointer;font-weight:900;">✕</button>
+    <h3 style="font-size:1.4rem;font-weight:900;color:#0B1F3A;margin-bottom:8px;">Request a Bulk Quote</h3>
+    <p style="color:#888;font-size:.85rem;margin-bottom:20px;">Fill in details – we'll respond within 2 hours.</p>
+    <form id="quote-form" onsubmit="submitQuote(event)" style="display:flex;flex-direction:column;gap:12px;">
+      <input id="q-name"    type="text"  placeholder="Your Name"     required style="border:2px solid #e5e7eb;border-radius:10px;padding:12px 16px;font-family:inherit;font-size:.9rem;outline:none;"/>
+      <input id="q-company" type="text"  placeholder="Company Name"  required style="border:2px solid #e5e7eb;border-radius:10px;padding:12px 16px;font-family:inherit;font-size:.9rem;outline:none;"/>
+      <input id="q-phone"   type="tel"   placeholder="Mobile Number" required style="border:2px solid #e5e7eb;border-radius:10px;padding:12px 16px;font-family:inherit;font-size:.9rem;outline:none;"/>
+      <input id="q-product" type="text"  placeholder="Product Name"  style="border:2px solid #e5e7eb;border-radius:10px;padding:12px 16px;font-family:inherit;font-size:.9rem;outline:none;"/>
+      <input id="q-qty"     type="text"  placeholder="Quantity Required (e.g. 500 units)" style="border:2px solid #e5e7eb;border-radius:10px;padding:12px 16px;font-family:inherit;font-size:.9rem;outline:none;"/>
+      <button type="submit" style="background:#FFC107;color:#0B1F3A;border:none;border-radius:10px;padding:14px;font-family:inherit;font-size:1rem;font-weight:900;cursor:pointer;">Submit Quote Request →</button>
+    </form>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="Product preview"/>
+  <p id="lightbox-caption" style="color:#fff;margin-top:12px;font-size:.95rem;"></p>
+  <button onclick="closeLightbox()" style="position:fixed;top:24px;right:28px;background:#FFC107;color:#0B1F3A;border:none;border-radius:50%;width:40px;height:40px;font-size:1.2rem;cursor:pointer;font-weight:900;">✕</button>
+</div>
+
+<script>
+// ─── PROGRESS BAR ───────────────────────────────────────────────
+window.addEventListener('scroll',()=>{
+  const el=document.getElementById('progress-bar');
+  const p=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight)*100;
+  el.style.width=p+'%';
+  document.getElementById('back-top').classList.toggle('visible',window.scrollY>300);
+});
+
+// ─── MOBILE MENU ─────────────────────────────────────────────────
+function toggleMenu(){document.getElementById('mobile-menu').classList.toggle('open');}
+
+// ─── COUNTERS ────────────────────────────────────────────────────
+const counters=document.querySelectorAll('[data-target]');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)animateCounter(e.target)});
+},{threshold:.5});
+counters.forEach(c=>obs.observe(c));
+function animateCounter(el){
+  const target=+el.dataset.target;
+  const suffix=target>=1000?'+':'+';
+  let cur=0;const step=Math.ceil(target/60);
+  const t=setInterval(()=>{
+    cur=Math.min(cur+step,target);
+    el.textContent=cur.toLocaleString()+suffix;
+    if(cur>=target)clearInterval(t);
+  },28);
+}
+
+// ─── SCROLL REVEAL ───────────────────────────────────────────────
+const ro=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+// ─── PRODUCT FILTER ──────────────────────────────────────────────
+function filterProducts(cat){
+  document.querySelectorAll('#product-grid .prod-card').forEach(c=>{
+    const match=cat==='all'||c.dataset.cat===cat;
+    c.style.display=match?'block':'none';
+  });
+  document.querySelectorAll('.filter-btn').forEach(b=>{
+    const active=b.textContent.trim().toLowerCase().replace(/\s+/g,'').includes(cat)||
+                 (cat==='all'&&b.textContent.trim()==='All Products');
+    b.classList.toggle('active-filter',active);
+    b.style.background=active?'#0B1F3A':'';
+    b.style.color=active?'#fff':'';
+  });
+}
+
+// ─── LOAD PRODUCTS FROM ADMIN (localStorage) & RENDER DYNAMIC CARDS ──────────
+const PROD_KEY='ss_products';
+const DEFAULT_PRODS=[
+  {id:'p1',name:'PVC Rain Suit',cat:'rainwear',price:'Contact for Price',moq:'50 units',desc:'Heavy-duty 0.35mm PVC + polyester. 100% waterproof with heat-sealed seams.',cert:'EN 343',status:'active',img:'./images/pvc_rainsuit.png',imgBase64:''},
+  {id:'p2',name:'Industrial Safety Helmet',cat:'head',price:'Contact for Price',moq:'100 units',desc:'High-impact HDPE shell with 6-point ratchet suspension. EN397 certified.',cert:'EN397',status:'active',img:'./images/safety_helmet.png',imgBase64:''},
+  {id:'p3',name:'Industrial Safety Gloves',cat:'hands',price:'Contact for Price',moq:'200 pairs',desc:'Cut-resistant Level 4, chemical & anti-vibration PVC grip gloves.',cert:'EN388',status:'active',img:'./images/safety_gloves.png',imgBase64:''},
+  {id:'p4',name:'Reflective Safety Jacket',cat:'visibility',price:'Contact for Price',moq:'50 units',desc:'Class 2 EN ISO 20471 certified with 3M Scotchlite reflective strips.',cert:'EN ISO 20471',status:'active',img:'./images/reflective_jacket.png',imgBase64:''},
+  {id:'p5',name:'Steel Toe Safety Shoes',cat:'foot',price:'Contact for Price',moq:'50 pairs',desc:'200J steel toe cap, anti-puncture midsole, oil & slip resistant rubber sole.',cert:'IS 15298',status:'active',img:'./images/safety_shoes.png',imgBase64:''},
+  {id:'p6',name:'Industrial Respirator',cat:'respiratory',price:'Contact for Price',moq:'100 units',desc:'N95/FFP2 certified half-face respirator with replaceable filters.',cert:'N95/FFP2',status:'active',img:'./images/respirator_mask.png',imgBase64:''},
+];
+function getAdminProducts(){
+  const raw=localStorage.getItem(PROD_KEY);
+  return raw?JSON.parse(raw):DEFAULT_PRODS;
+}
+function catBadge(c){return{rainwear:'Rainwear',head:'Head Protection',hands:'Hand Protection',visibility:'High Visibility',foot:'Foot Protection',respiratory:'Respiratory',other:'Other'}[c]||c;}
+function renderDynamicCatalog(){
+  const prods=getAdminProducts().filter(p=>p.status==='active');
+  const grid=document.getElementById('product-grid');
+  if(!grid)return;
+  grid.innerHTML=prods.map(p=>{
+    const imgSrc=p.imgBase64||p.img||'';
+    const waText=encodeURIComponent(`Hello Star Safety, I am interested in ${p.name}`);
+    const tags=(p.cert?`<span class="bg-gray-100 text-navy text-xs px-2 py-1 rounded">${p.cert}</span>`:'')+
+               (p.moq?`<span class="bg-gray-100 text-navy text-xs px-2 py-1 rounded">MOQ: ${p.moq}</span>`:'');
+    const priceTag=p.price&&p.price!=='Contact for Price'?`<div style="font-weight:800;font-size:1rem;color:#0B1F3A;margin-bottom:4px;">₹${p.price}</div>`:
+      `<div style="font-size:.8rem;color:#94a3b8;margin-bottom:4px;">Price on Request</div>`;
+    return`<div class="prod-card" data-cat="${p.cat}">
+      <img src="${imgSrc}" alt="${p.name}" loading="lazy" onerror="this.src=''"/>
+      <div class="p-6">
+        <span class="text-xs font-bold text-yellow uppercase tracking-wider">${catBadge(p.cat)}</span>
+        <h3 class="text-xl font-bold text-navy mt-1 mb-2">${p.name}</h3>
+        ${priceTag}
+        <p class="text-gray-500 text-sm mb-3">${p.desc}</p>
+        <div class="flex flex-wrap gap-1 mb-4">${tags}</div>
+        <div class="flex gap-2">
+          <button onclick="openQuote('${p.name}')" class="flex-1 bg-navy text-white py-2.5 rounded-lg font-semibold text-sm hover:bg-yellow hover:text-navy tr">Get Quote</button>
+          <a href="https://wa.me/918796504046?text=${waText}" target="_blank" class="bg-[#25D366] text-white px-3 py-2.5 rounded-lg font-bold text-sm hover:opacity-90 tr">WhatsApp</a>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  // Re-attach lightbox listeners
+  grid.querySelectorAll('img').forEach(img=>{
+    img.style.cursor='zoom-in';
+    img.addEventListener('click',()=>{if(img.src)openLightbox(img.src,img.alt);});
+  });
+  // Also refresh search index
+  rebuildSearchIndex();
+}
+renderDynamicCatalog();
+
+// ─── LIVE SEARCH ──────────────────────────────────────────────────
+let products=getAdminProducts();
+function rebuildSearchIndex(){products=getAdminProducts();}
+const searchInput=document.getElementById('nav-search');
+const searchResults=document.getElementById('search-results');
+searchInput.addEventListener('input',function(){
+  const q=this.value.trim().toLowerCase();
+  if(!q){searchResults.classList.remove('open');return;}
+  const hits=products.filter(p=>p.name.toLowerCase().includes(q));
+  if(!hits.length){searchResults.classList.remove('open');return;}
+  searchResults.innerHTML=hits.map(p=>`
+    <div onclick="scrollToCatalog('${p.cat}')" style="padding:12px 16px;cursor:pointer;font-size:.875rem;font-weight:600;color:#0B1F3A;border-bottom:1px solid #f3f4f6;transition:background .2s;"
+         onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background=''">
+      ${p.name}
+    </div>`).join('');
+  searchResults.classList.add('open');
+});
+document.addEventListener('click',e=>{if(!e.target.closest('#nav-search')&&!e.target.closest('#search-results'))searchResults.classList.remove('open');});
+function scrollToCatalog(cat){
+  document.getElementById('catalog').scrollIntoView({behavior:'smooth'});
+  setTimeout(()=>filterProducts(cat),500);
+  searchResults.classList.remove('open');
+  searchInput.value='';
+}
+
+// ─── LIGHTBOX (click product images) ─────────────────────────────
+document.querySelectorAll('.prod-card img').forEach(img=>{
+  img.style.cursor='zoom-in';
+  img.addEventListener('click',()=>openLightbox(img.src,img.alt));
+});
+function openLightbox(src,alt){
+  document.getElementById('lightbox-img').src=src;
+  document.getElementById('lightbox-caption').textContent=alt;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('open');}
+
+// ─── QUOTE MODAL ─────────────────────────────────────────────────
+function openQuote(product=''){
+  if(product)document.getElementById('q-product').value=product;
+  document.getElementById('quote-modal').classList.add('open');
+}
+function closeQuote(){document.getElementById('quote-modal').classList.remove('open');}
+// ─── SAVE ENQUIRY TO MONGODB (via API) ─────────────────────────────────────
+async function saveEnquiry(data){
+  try {
+    await SS_API.Enquiries.submit(data);
+  } catch(err) {
+    // Fallback to localStorage if server offline
+    const queries=JSON.parse(localStorage.getItem('ss_queries')||'[]');
+    queries.push({...data,id:'q'+Date.now(),time:new Date().toLocaleString('en-IN'),unread:true});
+    localStorage.setItem('ss_queries',JSON.stringify(queries));
+    console.warn('Server offline — saved to localStorage instead');
+  }
+}
+
+function submitQuote(e){
+  e.preventDefault();
+  const name=document.getElementById('q-name').value;
+  const company=document.getElementById('q-company').value;
+  const phone=document.getElementById('q-phone').value;
+  const product=document.getElementById('q-product').value;
+  const qty=document.getElementById('q-qty').value;
+  // Save to admin inbox
+  saveEnquiry({type:'Bulk Quote',name,company,phone,product,qty});
+  // Also send via WhatsApp
+  const msg=`Hello Star Safety,%0AI am interested in placing a bulk order.%0A%0AName: ${encodeURIComponent(name)}%0ACompany: ${encodeURIComponent(company)}%0APhone: ${encodeURIComponent(phone)}%0AProduct: ${encodeURIComponent(product)||'Multiple Products'}%0AQuantity: ${encodeURIComponent(qty)||'To be discussed'}`;
+  window.open(`https://wa.me/918796504046?text=${msg}`,'_blank');
+  closeQuote();
+  showToast('Quote request sent! ✅ Saved to Admin.');
+  document.getElementById('quote-form').reset();
+}
+
+// ─── CONTACT FORM ─────────────────────────────────────────────────
+function submitContactForm(e){
+  e.preventDefault();
+  const fname=document.getElementById('cf-fname').value;
+  const lname=document.getElementById('cf-lname').value;
+  const company=document.getElementById('cf-company').value;
+  const phone=document.getElementById('cf-phone').value;
+  const email=document.getElementById('cf-email').value;
+  const product=document.getElementById('cf-product').value;
+  const msg=document.getElementById('cf-msg').value;
+  // Save to admin inbox
+  saveEnquiry({type:'Contact Form',name:fname+' '+lname,company,phone,email,product,msg});
+  // Also send via WhatsApp
+  const waMsg=`Hello Star Safety,%0ANew Enquiry from your website:%0A%0AName: ${encodeURIComponent(fname+' '+lname)}%0ACompany: ${encodeURIComponent(company)}%0APhone: ${encodeURIComponent(phone)}%0AEmail: ${encodeURIComponent(email)}%0AProduct Interest: ${encodeURIComponent(product)}%0ARequirement: ${encodeURIComponent(msg)}`;
+  window.open(`https://wa.me/918796504046?text=${waMsg}`,'_blank');
+  showToast('Enquiry sent! Saved to Admin Panel. ✅');
+  document.getElementById('contact-form').reset();
+}
+
+// ─── FAQ ACCORDION ────────────────────────────────────────────────
+function toggleFaq(btn){
+  const body=btn.nextElementSibling;
+  const icon=btn.querySelector('.faq-icon');
+  const isOpen=body.classList.contains('open');
+  document.querySelectorAll('.faq-body').forEach(b=>b.classList.remove('open'));
+  document.querySelectorAll('.faq-icon').forEach(i=>i.textContent='+');
+  if(!isOpen){body.classList.add('open');icon.textContent='−';}
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+</script>
+</body>
+</html>

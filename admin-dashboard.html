@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<script src="./api-client.js"></script>
+<title>Admin Dashboard – STAR SAFETY</title>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hanken Grotesk',sans-serif;background:#f0f2f5;color:#0B1F3A;min-height:100vh;}
+
+/* ── SIDEBAR ── */
+.sidebar{position:fixed;top:0;left:0;width:240px;height:100vh;background:#0B1F3A;display:flex;flex-direction:column;z-index:100;overflow-y:auto;}
+.sidebar-logo{padding:24px 20px;border-bottom:1px solid rgba(255,255,255,.08);}
+.sidebar-logo .brand{font-size:1.3rem;font-weight:900;color:#fff;}
+.sidebar-logo .brand span{color:#FFC107;}
+.sidebar-logo .role{font-size:.7rem;color:#94a3b8;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-top:2px;}
+nav{flex:1;padding:16px 0;}
+.nav-section{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748b;padding:12px 20px 6px;}
+.nav-link{display:flex;align-items:center;gap:12px;padding:11px 20px;color:#94a3b8;font-weight:600;font-size:.875rem;cursor:pointer;transition:all .2s;border-left:3px solid transparent;}
+.nav-link:hover,.nav-link.active{color:#FFC107;background:rgba(255,193,7,.07);border-left-color:#FFC107;}
+.nav-link .icon{font-size:1.1rem;width:20px;text-align:center;}
+.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.08);}
+.logout-btn{width:100%;background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:10px;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer;transition:.2s;}
+.logout-btn:hover{background:#ef4444;color:#fff;}
+
+/* ── MAIN ── */
+.main{margin-left:240px;min-height:100vh;}
+.topbar{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.topbar-title{font-size:1.1rem;font-weight:800;color:#0B1F3A;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.admin-badge{background:#0B1F3A;color:#FFC107;border-radius:50px;padding:6px 14px;font-size:.78rem;font-weight:800;}
+.content{padding:28px;}
+
+/* ── TABS ── */
+.tab-section{display:none;}
+.tab-section.active{display:block;}
+
+/* ── STAT CARDS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px;}
+.stat-card{background:#fff;border-radius:16px;padding:20px 24px;box-shadow:0 2px 12px rgba(0,0,0,.05);}
+.stat-card .num{font-size:2rem;font-weight:900;color:#0B1F3A;}
+.stat-card .label{font-size:.8rem;font-weight:600;color:#94a3b8;margin-top:4px;text-transform:uppercase;letter-spacing:.05em;}
+.stat-card .trend{font-size:.75rem;font-weight:700;color:#22c55e;margin-top:8px;}
+
+/* ── CARD ── */
+.card{background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.05);margin-bottom:24px;}
+.card-header{padding:20px 24px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:1rem;font-weight:800;color:#0B1F3A;}
+.card-body{padding:24px;}
+
+/* ── BUTTONS ── */
+.btn-primary{background:#0B1F3A;color:#FFC107;border:none;border-radius:10px;padding:10px 20px;font-family:inherit;font-weight:700;font-size:.875rem;cursor:pointer;transition:.2s;}
+.btn-primary:hover{background:#FFC107;color:#0B1F3A;}
+.btn-yellow{background:#FFC107;color:#0B1F3A;border:none;border-radius:10px;padding:10px 20px;font-family:inherit;font-weight:700;font-size:.875rem;cursor:pointer;transition:.2s;}
+.btn-yellow:hover{background:#0B1F3A;color:#FFC107;}
+.btn-danger{background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;border-radius:8px;padding:6px 14px;font-family:inherit;font-weight:700;font-size:.78rem;cursor:pointer;transition:.2s;}
+.btn-danger:hover{background:#dc2626;color:#fff;}
+.btn-edit{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;border-radius:8px;padding:6px 14px;font-family:inherit;font-weight:700;font-size:.78rem;cursor:pointer;transition:.2s;}
+.btn-edit:hover{background:#2563eb;color:#fff;}
+.btn-sm{padding:7px 14px;font-size:.78rem;border-radius:8px;}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;padding:10px 14px;text-align:left;background:#f8fafc;border-bottom:2px solid #e5e7eb;}
+.tbl td{padding:14px;font-size:.875rem;border-bottom:1px solid #f3f4f6;vertical-align:middle;}
+.tbl tr:hover td{background:#fafbfc;}
+.tbl img{width:56px;height:56px;object-fit:contain;border-radius:8px;background:#f8f9fb;border:1px solid #e5e7eb;}
+
+/* ── BADGE ── */
+.badge{display:inline-block;border-radius:50px;padding:3px 10px;font-size:.72rem;font-weight:700;}
+.badge-green{background:#dcfce7;color:#16a34a;}
+.badge-yellow{background:#fef9c3;color:#a16207;}
+.badge-blue{background:#dbeafe;color:#1d4ed8;}
+.badge-red{background:#fee2e2;color:#dc2626;}
+.badge-gray{background:#f3f4f6;color:#374151;}
+
+/* ── FORM ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group.full{grid-column:1/-1;}
+.form-group label{font-size:.78rem;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.05em;}
+.form-group input,.form-group select,.form-group textarea{border:2px solid #e5e7eb;border-radius:10px;padding:11px 14px;font-family:inherit;font-size:.9rem;outline:none;transition:border .2s;color:#0B1F3A;background:#fff;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:#FFC107;}
+.form-group textarea{resize:vertical;min-height:90px;}
+.img-preview{width:120px;height:120px;border-radius:12px;object-fit:contain;background:#f3f4f6;border:2px dashed #d1d5db;display:flex;align-items:center;justify-content:center;font-size:2.5rem;cursor:pointer;overflow:hidden;}
+.img-preview img{width:100%;height:100%;object-fit:contain;}
+
+/* ── MODAL OVERLAY ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;padding:16px;}
+.overlay.open{display:flex;}
+.modal{background:#fff;border-radius:20px;padding:32px;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,.25);}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
+.modal-title{font-size:1.2rem;font-weight:800;color:#0B1F3A;}
+.close-btn{background:#f3f4f6;border:none;border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:1rem;font-weight:900;color:#374151;transition:.2s;}
+.close-btn:hover{background:#e5e7eb;}
+
+/* ── QUERY CARD ── */
+.query-card{background:#f8fafc;border:1px solid #e5e7eb;border-radius:14px;padding:18px 20px;margin-bottom:12px;transition:.2s;}
+.query-card:hover{border-color:#FFC107;box-shadow:0 4px 16px rgba(255,193,7,.15);}
+.query-card .q-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.query-card .q-name{font-weight:800;font-size:.95rem;color:#0B1F3A;}
+.query-card .q-time{font-size:.72rem;color:#94a3b8;font-weight:500;}
+.query-card .q-detail{font-size:.82rem;color:#475569;line-height:1.6;}
+.query-card .q-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+
+/* ── TOAST ── */
+#admin-toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:#0B1F3A;color:#FFC107;padding:13px 28px;border-radius:50px;font-weight:800;font-size:.875rem;z-index:9999;transition:transform .35s;pointer-events:none;white-space:nowrap;}
+#admin-toast.show{transform:translateX(-50%) translateY(0);}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:60px 24px;color:#94a3b8;}
+.empty .icon{font-size:3rem;margin-bottom:12px;}
+.empty p{font-size:.9rem;font-weight:600;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .sidebar{width:100%;height:auto;position:relative;flex-direction:row;flex-wrap:wrap;}
+  .main{margin-left:0;}
+  .form-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">STAR<span>SAFETY</span></div>
+    <div class="role">Admin Panel</div>
+  </div>
+  <nav>
+    <div class="nav-section">Main</div>
+    <div class="nav-link active" onclick="showTab('dashboard')"><span class="icon">📊</span> Dashboard</div>
+    <div class="nav-section">Catalog</div>
+    <div class="nav-link" onclick="showTab('products')"><span class="icon">📦</span> Products</div>
+    <div class="nav-link" onclick="showTab('add-product')"><span class="icon">➕</span> Add Product</div>
+    <div class="nav-section">Leads</div>
+    <div class="nav-link" onclick="showTab('queries')"><span class="icon">📨</span> Enquiries <span id="query-badge" style="background:#ef4444;color:#fff;border-radius:50px;padding:1px 7px;font-size:.7rem;margin-left:4px;display:none;"></span></div>
+    <div class="nav-section">Site</div>
+    <div class="nav-link" onclick="window.open('../index.html','_blank')"><span class="icon">🌐</span> View Website</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div style="font-size:.72rem;color:#64748b;margin-bottom:8px;font-weight:600;">Logged in as <strong style="color:#FFC107;">STAR0010</strong></div>
+    <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="page-title">Dashboard</div>
+    <div class="topbar-right">
+      <div class="admin-badge">Admin: STAR0010</div>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <div id="tab-dashboard" class="tab-section active">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="num" id="stat-products">0</div>
+          <div class="label">Total Products</div>
+          <div class="trend">↑ In Catalog</div>
+        </div>
+        <div class="stat-card">
+          <div class="num" id="stat-queries">0</div>
+          <div class="label">Total Enquiries</div>
+          <div class="trend" style="color:#3b82f6;">↑ All Time</div>
+        </div>
+        <div class="stat-card">
+          <div class="num" id="stat-new">0</div>
+          <div class="label">New Enquiries</div>
+          <div class="trend" style="color:#f59e0b;">● Unread</div>
+        </div>
+        <div class="stat-card">
+          <div class="num">24/7</div>
+          <div class="label">Support</div>
+          <div class="trend">● Always Online</div>
+        </div>
+      </div>
+
+      <!-- Recent Queries -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📨 Recent Enquiries</div>
+          <button class="btn-primary btn-sm" onclick="showTab('queries')">View All</button>
+        </div>
+        <div class="card-body" id="dash-recent-queries">
+          <div class="empty"><div class="icon">📭</div><p>No enquiries yet</p></div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card">
+        <div class="card-header"><div class="card-title">⚡ Quick Actions</div></div>
+        <div class="card-body" style="display:flex;flex-wrap:wrap;gap:12px;">
+          <button class="btn-yellow" onclick="showTab('add-product')">➕ Add New Product</button>
+          <button class="btn-primary" onclick="showTab('queries')">📨 View All Enquiries</button>
+          <button class="btn-primary" onclick="window.open('../index.html','_blank')">🌐 View Live Website</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PRODUCTS ═══ -->
+    <div id="tab-products" class="tab-section">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📦 Product Catalog <span id="prod-count" style="color:#94a3b8;font-weight:500;font-size:.85rem;"></span></div>
+          <button class="btn-yellow" onclick="showTab('add-product')">➕ Add New Product</button>
+        </div>
+        <div class="card-body" style="padding:0;overflow-x:auto;">
+          <table class="tbl" id="products-table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>MOQ</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="products-tbody"></tbody>
+          </table>
+          <div id="products-empty" class="empty" style="display:none;"><div class="icon">📦</div><p>No products yet. Add your first product!</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ADD PRODUCT ═══ -->
+    <div id="tab-add-product" class="tab-section">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title" id="add-form-title">➕ Add New Product</div>
+        </div>
+        <div class="card-body">
+          <form id="product-form" onsubmit="saveProduct(event)">
+            <input type="hidden" id="edit-id"/>
+
+            <!-- Image Upload -->
+            <div style="margin-bottom:24px;">
+              <label style="font-size:.78rem;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:10px;">Product Image</label>
+              <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                <div class="img-preview" id="img-preview-box" onclick="document.getElementById('img-upload').click()">
+                  <span id="img-placeholder">📷</span>
+                  <img id="img-preview" src="" alt="" style="display:none;"/>
+                </div>
+                <div>
+                  <input type="file" id="img-upload" accept="image/*" style="display:none;" onchange="previewImage(this)"/>
+                  <button type="button" class="btn-primary btn-sm" onclick="document.getElementById('img-upload').click()">📁 Upload Photo</button>
+                  <p style="font-size:.75rem;color:#94a3b8;margin-top:6px;">JPG, PNG, WebP. Recommended: 800×800px</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Product Name *</label>
+                <input type="text" id="f-name" placeholder="e.g. PVC Rain Suit Premium" required/>
+              </div>
+              <div class="form-group">
+                <label>Category *</label>
+                <select id="f-cat" required>
+                  <option value="">Select Category</option>
+                  <option value="rainwear">Rainwear</option>
+                  <option value="head">Head Protection</option>
+                  <option value="hands">Hand Protection</option>
+                  <option value="visibility">High Visibility</option>
+                  <option value="foot">Foot Protection</option>
+                  <option value="respiratory">Respiratory</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Price (₹)</label>
+                <input type="text" id="f-price" placeholder="e.g. ₹450/unit or Contact for Price"/>
+              </div>
+              <div class="form-group">
+                <label>MOQ (Minimum Order)</label>
+                <input type="text" id="f-moq" placeholder="e.g. 50 units"/>
+              </div>
+              <div class="form-group">
+                <label>Material</label>
+                <input type="text" id="f-material" placeholder="e.g. 0.35mm PVC + Polyester"/>
+              </div>
+              <div class="form-group">
+                <label>Available Sizes</label>
+                <input type="text" id="f-sizes" placeholder="e.g. S, M, L, XL, XXL"/>
+              </div>
+              <div class="form-group">
+                <label>Available Colours</label>
+                <input type="text" id="f-colors" placeholder="e.g. Yellow, Orange, Blue"/>
+              </div>
+              <div class="form-group">
+                <label>Certification</label>
+                <input type="text" id="f-cert" placeholder="e.g. EN397, IS 15298"/>
+              </div>
+              <div class="form-group full">
+                <label>Short Description *</label>
+                <textarea id="f-desc" placeholder="Describe the product – what it does, who it's for, key features…" required></textarea>
+              </div>
+              <div class="form-group full">
+                <label>Features (one per line)</label>
+                <textarea id="f-features" placeholder="100% Waterproof&#10;Heat-sealed seams&#10;Reflective strips&#10;Heavy-duty zip"></textarea>
+              </div>
+              <div class="form-group full">
+                <label>Applications</label>
+                <textarea id="f-applications" placeholder="e.g. Construction, Mining, Oil & Gas, Agriculture" style="min-height:60px;"></textarea>
+              </div>
+              <div class="form-group">
+                <label>Status</label>
+                <select id="f-status">
+                  <option value="active">Active – Show on Website</option>
+                  <option value="inactive">Hidden – Not Shown</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:12px;margin-top:24px;">
+              <button type="submit" class="btn-yellow" style="padding:13px 32px;font-size:.95rem;">💾 Save Product</button>
+              <button type="button" class="btn-primary" onclick="resetForm()" style="padding:13px 24px;">✕ Reset</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ENQUIRIES ═══ -->
+    <div id="tab-queries" class="tab-section">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📨 All Enquiries <span id="queries-count" style="color:#94a3b8;font-weight:500;font-size:.85rem;"></span></div>
+          <button class="btn-danger btn-sm" onclick="clearAllQueries()">🗑 Clear All</button>
+        </div>
+        <div class="card-body" id="queries-container">
+          <div class="empty"><div class="icon">📭</div><p>No enquiries yet. They'll appear here when customers submit forms.</p></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- .content -->
+</div><!-- .main -->
+
+<!-- EDIT PRODUCT MODAL -->
+<div class="overlay" id="edit-overlay" onclick="if(event.target===this)closeEdit()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">✏️ Edit Product</div>
+      <button class="close-btn" onclick="closeEdit()">✕</button>
+    </div>
+    <div id="edit-modal-body"></div>
+  </div>
+</div>
+<script src="api-client.js"></script>
+
+<!-- TOAST -->
+<div id="admin-toast"></div>
+
+<script>
+// ─── DEFAULT PRODUCTS (Seeded from main site) ─────────────────────────────────
+const DEFAULT_PRODUCTS=[
+  {id:'p1',name:'PVC Rain Suit',cat:'rainwear',price:'Contact for Price',moq:'50 units',material:'0.35mm PVC + Polyester',sizes:'M, L, XL, XXL, 3XL',colors:'Yellow, Orange, Blue',cert:'EN 343',desc:'Heavy-duty 0.35mm PVC + polyester. 100% waterproof with heat-sealed seams.',features:'100% Waterproof\nHeat-sealed seams\nReflective strips\nHeavy-duty zip\nSizes M–3XL',applications:'Construction, Marine, Agriculture, Road Work',status:'active',img:'./images/pvc_rainsuit.png',imgBase64:''},
+  {id:'p2',name:'Industrial Safety Helmet',cat:'head',price:'Contact for Price',moq:'100 units',material:'HDPE',sizes:'Universal (Adjustable)',colors:'Yellow, White, Orange, Blue, Red, Green',cert:'EN397',desc:'High-impact HDPE shell with 6-point ratchet suspension. EN397 certified.',features:'EN397 Certified\n6-point ratchet\nSlot for earmuffs\nSweat absorbing band',applications:'Construction, Mining, Manufacturing',status:'active',img:'./images/safety_helmet.png',imgBase64:''},
+  {id:'p3',name:'Industrial Safety Gloves',cat:'hands',price:'Contact for Price',moq:'200 pairs',material:'PVC/Rubber/Nylon',sizes:'S, M, L, XL, XXL',colors:'Orange/Black, Yellow/Black, Green',cert:'EN388 Cut Level 4',desc:'Cut-resistant Level 4, chemical & anti-vibration PVC grip gloves.',features:'Cut Level 4\nChemical Resistant\nAnti-vibration\nPVC grip coating',applications:'Chemical Plants, Construction, Manufacturing',status:'active',img:'./images/safety_gloves.png',imgBase64:''},
+  {id:'p4',name:'Reflective Safety Jacket',cat:'visibility',price:'Contact for Price',moq:'50 units',material:'Polyester Mesh',sizes:'M, L, XL, XXL, 3XL',colors:'Orange, Yellow, Lime',cert:'EN ISO 20471 Class 2',desc:'Class 2 EN ISO 20471 certified with 3M Scotchlite reflective strips.',features:'EN ISO 20471 Class 2\n3M Scotchlite strips\nBreathable mesh\nFront zip closure',applications:'Road Work, Construction, Warehousing',status:'active',img:'./images/reflective_jacket.png',imgBase64:''},
+  {id:'p5',name:'Steel Toe Safety Shoes',cat:'foot',price:'Contact for Price',moq:'50 pairs',material:'Leather + Rubber',sizes:'6 to 11 (UK)',colors:'Black',cert:'IS 15298',desc:'200J steel toe cap, anti-puncture midsole, oil & slip resistant rubber sole.',features:'200J Steel Toe Cap\nAnti-puncture midsole\nOil resistant sole\nIS 15298 certified',applications:'Construction, Oil & Gas, Heavy Industry',status:'active',img:'./images/safety_shoes.png',imgBase64:''},
+  {id:'p6',name:'Industrial Respirator',cat:'respiratory',price:'Contact for Price',moq:'100 units',material:'PP + Carbon Filter',sizes:'One Size',colors:'Blue/White, Grey/White',cert:'N95 / FFP2',desc:'N95/FFP2 certified half-face respirator with replaceable filters.',features:'N95 / FFP2 Certified\nReusable design\nReplaceable filters\nComfort foam seal',applications:'Chemical Plants, Mining, Painting, Grinding',status:'active',img:'./images/respirator_mask.png',imgBase64:''},
+];
+
+// ─── INIT STORAGE ─────────────────────────────────────────────────────────────
+function getProducts(){
+  const raw=localStorage.getItem(PROD_KEY);
+  if(!raw){localStorage.setItem(PROD_KEY,JSON.stringify(DEFAULT_PRODUCTS));return DEFAULT_PRODUCTS;}
+  return JSON.parse(raw);
+}
+function saveProducts(arr){localStorage.setItem(PROD_KEY,JSON.stringify(arr));}
+function getQueries(){const r=localStorage.getItem(QUERY_KEY);return r?JSON.parse(r):[];}
+function saveQueries(arr){localStorage.setItem(QUERY_KEY,JSON.stringify(arr));}
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+const PAGE_TITLES={dashboard:'Dashboard','add-product':'Add New Product',products:'Product Catalog',queries:'Enquiries'};
+function showTab(id){
+  document.querySelectorAll('.tab-section').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.getElementById('page-title').textContent=PAGE_TITLES[id]||id;
+  const links=document.querySelectorAll('.nav-link');
+  links.forEach(l=>{if(l.textContent.trim().startsWith({dashboard:'📊',products:'📦','add-product':'➕',queries:'📨'}[id]||''))l.classList.add('active');});
+  if(id==='products') renderProductsTable();
+  if(id==='queries') renderQueries();
+  if(id==='dashboard') renderDashboard();
+}
+
+// ─── DASHBOARD ────────────────────────────────────────────────────────────────
+function renderDashboard(){
+  const prods=getProducts();
+  const queries=getQueries();
+  const unread=queries.filter(q=>q.unread).length;
+  document.getElementById('stat-products').textContent=prods.length;
+  document.getElementById('stat-queries').textContent=queries.length;
+  document.getElementById('stat-new').textContent=unread;
+  // badge
+  const badge=document.getElementById('query-badge');
+  if(unread>0){badge.textContent=unread;badge.style.display='inline';}
+  else badge.style.display='none';
+  // recent
+  const container=document.getElementById('dash-recent-queries');
+  if(!queries.length){container.innerHTML='<div class="empty"><div class="icon">📭</div><p>No enquiries yet</p></div>';return;}
+  const recent=queries.slice(-5).reverse();
+  container.innerHTML=recent.map(q=>queryCardHTML(q)).join('');
+}
+
+// ─── PRODUCT TABLE ────────────────────────────────────────────────────────────
+function renderProductsTable(){
+  const prods=getProducts();
+  const tbody=document.getElementById('products-tbody');
+  const empty=document.getElementById('products-empty');
+  document.getElementById('prod-count').textContent=`(${prods.length} products)`;
+  if(!prods.length){tbody.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  tbody.innerHTML=prods.map(p=>`
+    <tr>
+      <td><img src="${p.imgBase64||p.img}" alt="${p.name}" onerror="this.style.display='none'"/></td>
+      <td><strong>${p.name}</strong></td>
+      <td><span class="badge badge-blue">${catLabel(p.cat)}</span></td>
+      <td>${p.price||'—'}</td>
+      <td>${p.moq||'—'}</td>
+      <td><span class="badge ${p.status==='active'?'badge-green':'badge-red'}">${p.status==='active'?'Active':'Hidden'}</span></td>
+      <td style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-edit" onclick="editProduct('${p.id}')">✏️ Edit</button>
+        <button class="btn-danger" onclick="deleteProduct('${p.id}')">🗑 Delete</button>
+      </td>
+    </tr>`).join('');
+}
+
+function catLabel(c){return{rainwear:'Rainwear',head:'Head Protection',hands:'Hand Protection',visibility:'High Visibility',foot:'Foot Protection',respiratory:'Respiratory',other:'Other'}[c]||c;}
+
+// ─── IMAGE PREVIEW ────────────────────────────────────────────────────────────
+let currentImgBase64='';
+function previewImage(input){
+  if(!input.files||!input.files[0])return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    currentImgBase64=e.target.result;
+    document.getElementById('img-preview').src=e.target.result;
+    document.getElementById('img-preview').style.display='block';
+    document.getElementById('img-placeholder').style.display='none';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+// ─── SAVE PRODUCT ─────────────────────────────────────────────────────────────
+function saveProduct(e){
+  e.preventDefault();
+  const editId=document.getElementById('edit-id').value;
+  const products=getProducts();
+  const prod={
+    id:editId||'p'+Date.now(),
+    name:document.getElementById('f-name').value.trim(),
+    cat:document.getElementById('f-cat').value,
+    price:document.getElementById('f-price').value.trim()||'Contact for Price',
+    moq:document.getElementById('f-moq').value.trim(),
+    material:document.getElementById('f-material').value.trim(),
+    sizes:document.getElementById('f-sizes').value.trim(),
+    colors:document.getElementById('f-colors').value.trim(),
+    cert:document.getElementById('f-cert').value.trim(),
+    desc:document.getElementById('f-desc').value.trim(),
+    features:document.getElementById('f-features').value.trim(),
+    applications:document.getElementById('f-applications').value.trim(),
+    status:document.getElementById('f-status').value,
+    img:'',
+    imgBase64:currentImgBase64,
+  };
+  if(editId){
+    const idx=products.findIndex(p=>p.id===editId);
+    if(idx>-1){
+      if(!currentImgBase64)prod.imgBase64=products[idx].imgBase64;
+      prod.img=products[idx].img;
+      products[idx]=prod;
+    }
+  } else {
+    products.push(prod);
+  }
+  saveProducts(products);
+  showToast(editId?'✅ Product updated!':'✅ Product added to catalog!');
+  resetForm();
+  showTab('products');
+}
+
+// ─── RESET FORM ───────────────────────────────────────────────────────────────
+function resetForm(){
+  document.getElementById('product-form').reset();
+  document.getElementById('edit-id').value='';
+  document.getElementById('img-preview').style.display='none';
+  document.getElementById('img-placeholder').style.display='block';
+  document.getElementById('add-form-title').textContent='➕ Add New Product';
+  currentImgBase64='';
+}
+
+// ─── EDIT PRODUCT ─────────────────────────────────────────────────────────────
+function editProduct(id){
+  const products=getProducts();
+  const p=products.find(x=>x.id===id);
+  if(!p)return;
+  showTab('add-product');
+  document.getElementById('add-form-title').textContent='✏️ Edit Product: '+p.name;
+  document.getElementById('edit-id').value=p.id;
+  document.getElementById('f-name').value=p.name;
+  document.getElementById('f-cat').value=p.cat;
+  document.getElementById('f-price').value=p.price==='Contact for Price'?'':p.price;
+  document.getElementById('f-moq').value=p.moq;
+  document.getElementById('f-material').value=p.material;
+  document.getElementById('f-sizes').value=p.sizes;
+  document.getElementById('f-colors').value=p.colors;
+  document.getElementById('f-cert').value=p.cert;
+  document.getElementById('f-desc').value=p.desc;
+  document.getElementById('f-features').value=p.features;
+  document.getElementById('f-applications').value=p.applications;
+  document.getElementById('f-status').value=p.status;
+  const imgSrc=p.imgBase64||p.img;
+  if(imgSrc){
+    document.getElementById('img-preview').src=imgSrc;
+    document.getElementById('img-preview').style.display='block';
+    document.getElementById('img-placeholder').style.display='none';
+    currentImgBase64=p.imgBase64||'';
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function closeEdit(){document.getElementById('edit-overlay').classList.remove('open');}
+
+// ─── DELETE PRODUCT ───────────────────────────────────────────────────────────
+function deleteProduct(id){
+  if(!confirm('Are you sure you want to delete this product? This will also remove it from the website.'))return;
+  const products=getProducts().filter(p=>p.id!==id);
+  saveProducts(products);
+  renderProductsTable();
+  renderDashboard();
+  showToast('🗑 Product deleted from catalog.');
+}
+
+// ─── QUERIES ─────────────────────────────────────────────────────────────────
+function queryCardHTML(q){
+  return`<div class="query-card" id="qc-${q.id}">
+    <div class="q-header">
+      <div>
+        <div class="q-name">${q.name||'Unknown'} ${q.company?'– '+q.company:''}</div>
+        <div class="q-time">📅 ${q.time} &nbsp;|&nbsp; 📞 ${q.phone||'Not provided'}</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        ${q.unread?'<span class="badge badge-red">New</span>':'<span class="badge badge-gray">Read</span>'}
+        <button class="btn-danger" style="padding:4px 10px;" onclick="deleteQuery('${q.id}')">🗑</button>
+      </div>
+    </div>
+    <div class="q-detail">
+      ${q.email?'✉️ '+q.email+'<br/>':''}
+      ${q.product?'📦 Product: <strong>'+q.product+'</strong><br/>':''}
+      ${q.qty?'🔢 Quantity: '+q.qty+'<br/>':''}
+      ${q.msg?'💬 '+q.msg:''}
+    </div>
+    <div class="q-tags">
+      <span class="badge badge-blue">${q.type||'Contact'}</span>
+      ${q.unread?`<button class="badge badge-yellow" style="cursor:pointer;border:none;" onclick="markRead('${q.id}')">✓ Mark Read</button>`:''}
+      ${q.phone?`<a href="tel:${q.phone}" class="badge badge-green" style="text-decoration:none;">📞 Call</a>`:''}
+      ${q.phone?`<a href="https://wa.me/91${q.phone.replace(/\D/g,'')}?text=Hello%20${encodeURIComponent(q.name||'')}%2C%20Thank%20you%20for%20your%20enquiry%20at%20Star%20Safety!" target="_blank" class="badge" style="background:#d1fae5;color:#065f46;text-decoration:none;">💬 Reply WhatsApp</a>`:''}
+    </div>
+  </div>`;
+}
+
+function renderQueries(){
+  const queries=getQueries().slice().reverse();
+  document.getElementById('queries-count').textContent=`(${queries.length} total)`;
+  const container=document.getElementById('queries-container');
+  if(!queries.length){container.innerHTML='<div class="empty"><div class="icon">📭</div><p>No enquiries yet. They appear here when customers submit forms on the website.</p></div>';return;}
+  container.innerHTML=queries.map(q=>queryCardHTML(q)).join('');
+}
+
+function markRead(id){
+  const queries=getQueries();
+  const q=queries.find(x=>x.id===id);
+  if(q)q.unread=false;
+  saveQueries(queries);
+  renderQueries();
+  renderDashboard();
+}
+
+function deleteQuery(id){
+  if(!confirm('Delete this enquiry?'))return;
+  saveQueries(getQueries().filter(q=>q.id!==id));
+  renderQueries();
+  renderDashboard();
+  showToast('🗑 Enquiry deleted.');
+}
+
+function clearAllQueries(){
+  if(!confirm('Delete ALL enquiries? This cannot be undone.'))return;
+  saveQueries([]);
+  renderQueries();
+  renderDashboard();
+  showToast('🗑 All enquiries cleared.');
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+function showToast(msg){
+  const t=document.getElementById('admin-toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+renderDashboard();
+
+// ─── SYNC FROM MAIN SITE (check for new queries every 3s) ─────────────────────
+setInterval(()=>{
+  const unread=getQueries().filter(q=>q.unread).length;
+  const badge=document.getElementById('query-badge');
+  if(unread>0){badge.textContent=unread;badge.style.display='inline';}
+  else badge.style.display='none';
+  document.getElementById('stat-new').textContent=unread;
+},3000);
+</script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<script src="./api-client.js"></script>
+<title>Admin Login – STAR SAFETY</title>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hanken Grotesk',sans-serif;background:linear-gradient(135deg,#0B1F3A 0%,#132847 50%,#0d2a4a 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;}
+.card{background:#fff;border-radius:20px;padding:48px 44px;width:100%;max-width:420px;box-shadow:0 30px 80px rgba(0,0,0,.4);}
+.logo{text-align:center;margin-bottom:32px;}
+.logo-text{font-size:1.8rem;font-weight:900;color:#0B1F3A;}
+.logo-text span{color:#FFC107;}
+.logo-sub{color:#888;font-size:.8rem;margin-top:4px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;}
+h2{font-size:1.4rem;font-weight:800;color:#0B1F3A;margin-bottom:6px;}
+.sub{color:#888;font-size:.85rem;margin-bottom:28px;}
+label{display:block;font-size:.8rem;font-weight:700;color:#0B1F3A;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em;}
+input{width:100%;border:2px solid #e5e7eb;border-radius:10px;padding:13px 16px;font-family:inherit;font-size:.95rem;outline:none;transition:border .2s;color:#0B1F3A;}
+input:focus{border-color:#FFC107;}
+.field{margin-bottom:18px;position:relative;}
+.toggle-pw{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:#888;font-size:1rem;user-select:none;}
+.btn{width:100%;background:#0B1F3A;color:#FFC107;border:none;border-radius:12px;padding:15px;font-family:inherit;font-size:1rem;font-weight:800;cursor:pointer;transition:background .2s,transform .15s;}
+.btn:hover{background:#FFC107;color:#0B1F3A;transform:scale(1.01);}
+.error{background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;border-radius:8px;padding:10px 14px;font-size:.85rem;font-weight:600;margin-bottom:16px;display:none;}
+.badge{background:#f3f4f6;border-radius:8px;padding:10px 14px;font-size:.78rem;color:#6b7280;margin-top:18px;text-align:center;}
+.badge span{color:#0B1F3A;font-weight:700;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <div class="logo-text">STAR<span>SAFETY</span></div>
+    <div class="logo-sub">Admin Control Panel</div>
+  </div>
+  <h2>Welcome Back</h2>
+  <p class="sub">Sign in to manage your website</p>
+  <div class="error" id="err">❌ Invalid Admin ID or Password. Please try again.</div>
+  <form onsubmit="doLogin(event)">
+    <div class="field">
+      <label>Admin ID</label>
+      <input type="text" id="uid" placeholder="Enter your Admin ID" autocomplete="username"/>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="pwd" placeholder="Enter your password" autocomplete="current-password"/>
+      <span class="toggle-pw" onclick="togglePw()">👁</span>
+    </div>
+    <button class="btn" type="submit">Sign In to Dashboard →</button>
+  </form>
+  <div class="badge">Secure access • Admin ID: <span>STAR0010</span></div>
+</div>
+<script>
+function togglePw(){const i=document.getElementById('pwd');i.type=i.type==='password'?'text':'password';}
+async function doLogin(e){
+  e.preventDefault();
+  const uid=document.getElementById('uid').value.trim();
+  const pwd=document.getElementById('pwd').value;
+  const btn=e.target.querySelector('button');
+  btn.textContent='Signing in…';btn.disabled=true;
+  try {
+    await SS_API.Auth.login(uid, pwd);
+    window.location.href='admin-dashboard.html';
+  } catch(err) {
+    document.getElementById('err').style.display='block';
+    btn.textContent='Sign In to Dashboard →';btn.disabled=false;
+  }
+}
+// If already logged in with valid token, skip to dashboard
+if(SS_API.isLoggedIn()) window.location.href='admin-dashboard.html';
+</script>
+</body>
+</html>
