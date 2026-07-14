@@ -1,0 +1,17 @@
+{
+  "name": "star-safety",
+  "version": "1.0.0",
+  "description": "Star Safety Industrial Equipment Website",
+  "scripts": {
+    "start": "node server/index.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.16.1",
+    "multer": "^2.0.1"
+  }
+}

@@ -4,7 +4,7 @@
 // ═══════════════════════════════════════════════════════
 
 const IS_LOCAL = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1');
-const API_BASE = IS_LOCAL ? 'http://localhost:5000/api' : 'https://YOUR_RENDER_BACKEND_URL.onrender.com/api';
+const API_BASE = IS_LOCAL ? 'http://localhost:5000/api' : '/api';
 
 // ── Token helpers ────────────────────────────────────────
 const getToken  = ()    => sessionStorage.getItem('ss_jwt');
