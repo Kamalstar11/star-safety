@@ -741,25 +741,30 @@ function filterProducts(cat){
   });
 }
 
-// ─── LOAD PRODUCTS FROM ADMIN (localStorage) & RENDER DYNAMIC CARDS ──────────
-const PROD_KEY='ss_products';
-const DEFAULT_PRODS=[
-  {id:'p1',name:'PVC Rain Suit',cat:'rainwear',price:'Contact for Price',moq:'50 units',desc:'Heavy-duty 0.35mm PVC + polyester. 100% waterproof with heat-sealed seams.',cert:'EN 343',status:'active',img:'./images/pvc_rainsuit.png',imgBase64:''},
-  {id:'p2',name:'Industrial Safety Helmet',cat:'head',price:'Contact for Price',moq:'100 units',desc:'High-impact HDPE shell with 6-point ratchet suspension. EN397 certified.',cert:'EN397',status:'active',img:'./images/safety_helmet.png',imgBase64:''},
-  {id:'p3',name:'Industrial Safety Gloves',cat:'hands',price:'Contact for Price',moq:'200 pairs',desc:'Cut-resistant Level 4, chemical & anti-vibration PVC grip gloves.',cert:'EN388',status:'active',img:'./images/safety_gloves.png',imgBase64:''},
-  {id:'p4',name:'Reflective Safety Jacket',cat:'visibility',price:'Contact for Price',moq:'50 units',desc:'Class 2 EN ISO 20471 certified with 3M Scotchlite reflective strips.',cert:'EN ISO 20471',status:'active',img:'./images/reflective_jacket.png',imgBase64:''},
-  {id:'p5',name:'Steel Toe Safety Shoes',cat:'foot',price:'Contact for Price',moq:'50 pairs',desc:'200J steel toe cap, anti-puncture midsole, oil & slip resistant rubber sole.',cert:'IS 15298',status:'active',img:'./images/safety_shoes.png',imgBase64:''},
-  {id:'p6',name:'Industrial Respirator',cat:'respiratory',price:'Contact for Price',moq:'100 units',desc:'N95/FFP2 certified half-face respirator with replaceable filters.',cert:'N95/FFP2',status:'active',img:'./images/respirator_mask.png',imgBase64:''},
-];
-function getAdminProducts(){
-  const raw=localStorage.getItem(PROD_KEY);
-  return raw?JSON.parse(raw):DEFAULT_PRODS;
-}
+// ─── LOAD PRODUCTS FROM MONGODB API & RENDER DYNAMIC CARDS ───────────────────
+let _cachedProducts = [];
 function catBadge(c){return{rainwear:'Rainwear',head:'Head Protection',hands:'Hand Protection',visibility:'High Visibility',foot:'Foot Protection',respiratory:'Respiratory',other:'Other'}[c]||c;}
-function renderDynamicCatalog(){
-  const prods=getAdminProducts().filter(p=>p.status==='active');
+async function renderDynamicCatalog(){
   const grid=document.getElementById('product-grid');
   if(!grid)return;
+  grid.innerHTML='<div style="text-align:center;padding:60px;color:#94a3b8;grid-column:1/-1;">⏳ Loading products...</div>';
+  let prods=[];
+  try{
+    prods = await SS_API.Products.getAll();
+    _cachedProducts = prods;
+  }catch(err){
+    console.error('API load failed, using defaults',err);
+    prods = [
+      {_id:'p1',name:'PVC Rain Suit',cat:'rainwear',price:'Contact for Price',moq:'50 units',desc:'Heavy-duty 0.35mm PVC + polyester. 100% waterproof with heat-sealed seams.',cert:'EN 343',status:'active',img:'./images/pvc_rainsuit.png',imgBase64:''},
+      {_id:'p2',name:'Industrial Safety Helmet',cat:'head',price:'Contact for Price',moq:'100 units',desc:'High-impact HDPE shell with 6-point ratchet suspension. EN397 certified.',cert:'EN397',status:'active',img:'./images/safety_helmet.png',imgBase64:''},
+      {_id:'p3',name:'Industrial Safety Gloves',cat:'hands',price:'Contact for Price',moq:'200 pairs',desc:'Cut-resistant Level 4, chemical & anti-vibration PVC grip gloves.',cert:'EN388',status:'active',img:'./images/safety_gloves.png',imgBase64:''},
+      {_id:'p4',name:'Reflective Safety Jacket',cat:'visibility',price:'Contact for Price',moq:'50 units',desc:'Class 2 EN ISO 20471 certified with 3M Scotchlite reflective strips.',cert:'EN ISO 20471',status:'active',img:'./images/reflective_jacket.png',imgBase64:''},
+      {_id:'p5',name:'Steel Toe Safety Shoes',cat:'foot',price:'Contact for Price',moq:'50 pairs',desc:'200J steel toe cap, anti-puncture midsole, oil & slip resistant rubber sole.',cert:'IS 15298',status:'active',img:'./images/safety_shoes.png',imgBase64:''},
+      {_id:'p6',name:'Industrial Respirator',cat:'respiratory',price:'Contact for Price',moq:'100 units',desc:'N95/FFP2 certified half-face respirator with replaceable filters.',cert:'N95/FFP2',status:'active',img:'./images/respirator_mask.png',imgBase64:''},
+    ];
+    _cachedProducts = prods;
+  }
+  prods = prods.filter(p=>p.status==='active');
   grid.innerHTML=prods.map(p=>{
     const imgSrc=p.imgBase64||p.img||'';
     const waText=encodeURIComponent(`Hello Star Safety, I am interested in ${p.name}`);
@@ -787,20 +792,18 @@ function renderDynamicCatalog(){
     img.style.cursor='zoom-in';
     img.addEventListener('click',()=>{if(img.src)openLightbox(img.src,img.alt);});
   });
-  // Also refresh search index
-  rebuildSearchIndex();
+  // Refresh search index
+  _cachedProducts = prods;
 }
 renderDynamicCatalog();
 
 // ─── LIVE SEARCH ──────────────────────────────────────────────────
-let products=getAdminProducts();
-function rebuildSearchIndex(){products=getAdminProducts();}
 const searchInput=document.getElementById('nav-search');
 const searchResults=document.getElementById('search-results');
 searchInput.addEventListener('input',function(){
   const q=this.value.trim().toLowerCase();
   if(!q){searchResults.classList.remove('open');return;}
-  const hits=products.filter(p=>p.name.toLowerCase().includes(q));
+  const hits=_cachedProducts.filter(p=>p.name.toLowerCase().includes(q));
   if(!hits.length){searchResults.classList.remove('open');return;}
   searchResults.innerHTML=hits.map(p=>`
     <div onclick="scrollToCatalog('${p.cat}')" style="padding:12px 16px;cursor:pointer;font-size:.875rem;font-weight:600;color:#0B1F3A;border-bottom:1px solid #f3f4f6;transition:background .2s;"
