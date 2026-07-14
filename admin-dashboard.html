@@ -361,25 +361,9 @@ nav{flex:1;padding:16px 0;}
 <div id="admin-toast"></div>
 
 <script>
-// ─── DEFAULT PRODUCTS (Seeded from main site) ─────────────────────────────────
-const DEFAULT_PRODUCTS=[
-  {id:'p1',name:'PVC Rain Suit',cat:'rainwear',price:'Contact for Price',moq:'50 units',material:'0.35mm PVC + Polyester',sizes:'M, L, XL, XXL, 3XL',colors:'Yellow, Orange, Blue',cert:'EN 343',desc:'Heavy-duty 0.35mm PVC + polyester. 100% waterproof with heat-sealed seams.',features:'100% Waterproof\nHeat-sealed seams\nReflective strips\nHeavy-duty zip\nSizes M–3XL',applications:'Construction, Marine, Agriculture, Road Work',status:'active',img:'./images/pvc_rainsuit.png',imgBase64:''},
-  {id:'p2',name:'Industrial Safety Helmet',cat:'head',price:'Contact for Price',moq:'100 units',material:'HDPE',sizes:'Universal (Adjustable)',colors:'Yellow, White, Orange, Blue, Red, Green',cert:'EN397',desc:'High-impact HDPE shell with 6-point ratchet suspension. EN397 certified.',features:'EN397 Certified\n6-point ratchet\nSlot for earmuffs\nSweat absorbing band',applications:'Construction, Mining, Manufacturing',status:'active',img:'./images/safety_helmet.png',imgBase64:''},
-  {id:'p3',name:'Industrial Safety Gloves',cat:'hands',price:'Contact for Price',moq:'200 pairs',material:'PVC/Rubber/Nylon',sizes:'S, M, L, XL, XXL',colors:'Orange/Black, Yellow/Black, Green',cert:'EN388 Cut Level 4',desc:'Cut-resistant Level 4, chemical & anti-vibration PVC grip gloves.',features:'Cut Level 4\nChemical Resistant\nAnti-vibration\nPVC grip coating',applications:'Chemical Plants, Construction, Manufacturing',status:'active',img:'./images/safety_gloves.png',imgBase64:''},
-  {id:'p4',name:'Reflective Safety Jacket',cat:'visibility',price:'Contact for Price',moq:'50 units',material:'Polyester Mesh',sizes:'M, L, XL, XXL, 3XL',colors:'Orange, Yellow, Lime',cert:'EN ISO 20471 Class 2',desc:'Class 2 EN ISO 20471 certified with 3M Scotchlite reflective strips.',features:'EN ISO 20471 Class 2\n3M Scotchlite strips\nBreathable mesh\nFront zip closure',applications:'Road Work, Construction, Warehousing',status:'active',img:'./images/reflective_jacket.png',imgBase64:''},
-  {id:'p5',name:'Steel Toe Safety Shoes',cat:'foot',price:'Contact for Price',moq:'50 pairs',material:'Leather + Rubber',sizes:'6 to 11 (UK)',colors:'Black',cert:'IS 15298',desc:'200J steel toe cap, anti-puncture midsole, oil & slip resistant rubber sole.',features:'200J Steel Toe Cap\nAnti-puncture midsole\nOil resistant sole\nIS 15298 certified',applications:'Construction, Oil & Gas, Heavy Industry',status:'active',img:'./images/safety_shoes.png',imgBase64:''},
-  {id:'p6',name:'Industrial Respirator',cat:'respiratory',price:'Contact for Price',moq:'100 units',material:'PP + Carbon Filter',sizes:'One Size',colors:'Blue/White, Grey/White',cert:'N95 / FFP2',desc:'N95/FFP2 certified half-face respirator with replaceable filters.',features:'N95 / FFP2 Certified\nReusable design\nReplaceable filters\nComfort foam seal',applications:'Chemical Plants, Mining, Painting, Grinding',status:'active',img:'./images/respirator_mask.png',imgBase64:''},
-];
-
-// ─── INIT STORAGE ─────────────────────────────────────────────────────────────
-function getProducts(){
-  const raw=localStorage.getItem(PROD_KEY);
-  if(!raw){localStorage.setItem(PROD_KEY,JSON.stringify(DEFAULT_PRODUCTS));return DEFAULT_PRODUCTS;}
-  return JSON.parse(raw);
-}
-function saveProducts(arr){localStorage.setItem(PROD_KEY,JSON.stringify(arr));}
-function getQueries(){const r=localStorage.getItem(QUERY_KEY);return r?JSON.parse(r):[];}
-function saveQueries(arr){localStorage.setItem(QUERY_KEY,JSON.stringify(arr));}
+// ─── AUTH GUARD ───────────────────────────────────────────────────────────────
+if(!SS_API.isLoggedIn()) window.location.href='admin.html';
+function logout(){ SS_API.Auth.logout(); }
 
 // ─── TABS ─────────────────────────────────────────────────────────────────────
 const PAGE_TITLES={dashboard:'Dashboard','add-product':'Add New Product',products:'Product Catalog',queries:'Enquiries'};
@@ -388,172 +372,184 @@ function showTab(id){
   document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
   document.getElementById('tab-'+id).classList.add('active');
   document.getElementById('page-title').textContent=PAGE_TITLES[id]||id;
-  const links=document.querySelectorAll('.nav-link');
-  links.forEach(l=>{if(l.textContent.trim().startsWith({dashboard:'📊',products:'📦','add-product':'➕',queries:'📨'}[id]||''))l.classList.add('active');});
-  if(id==='products') renderProductsTable();
-  if(id==='queries') renderQueries();
-  if(id==='dashboard') renderDashboard();
+  if(id==='products')   renderProductsTable();
+  if(id==='queries')    renderQueries();
+  if(id==='dashboard')  renderDashboard();
+  if(id==='add-product'){resetForm();}
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+function showToast(msg){
+  const t=document.getElementById('admin-toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
 }
 
 // ─── DASHBOARD ────────────────────────────────────────────────────────────────
-function renderDashboard(){
-  const prods=getProducts();
-  const queries=getQueries();
-  const unread=queries.filter(q=>q.unread).length;
-  document.getElementById('stat-products').textContent=prods.length;
-  document.getElementById('stat-queries').textContent=queries.length;
-  document.getElementById('stat-new').textContent=unread;
-  // badge
-  const badge=document.getElementById('query-badge');
-  if(unread>0){badge.textContent=unread;badge.style.display='inline';}
-  else badge.style.display='none';
-  // recent
-  const container=document.getElementById('dash-recent-queries');
-  if(!queries.length){container.innerHTML='<div class="empty"><div class="icon">📭</div><p>No enquiries yet</p></div>';return;}
-  const recent=queries.slice(-5).reverse();
-  container.innerHTML=recent.map(q=>queryCardHTML(q)).join('');
+async function renderDashboard(){
+  try{
+    const stats = await SS_API.Stats.get();
+    document.getElementById('stat-products').textContent = stats.totalProducts;
+    document.getElementById('stat-queries').textContent  = stats.totalEnquiries;
+    document.getElementById('stat-new').textContent      = stats.unreadEnquiries;
+    const badge = document.getElementById('query-badge');
+    if(stats.unreadEnquiries>0){badge.textContent=stats.unreadEnquiries;badge.style.display='inline';}
+    else badge.style.display='none';
+    const queries = await SS_API.Enquiries.getAll();
+    const container = document.getElementById('dash-recent-queries');
+    if(!queries.length){container.innerHTML='<div class="empty"><div class="icon">📭</div><p>No enquiries yet</p></div>';return;}
+    container.innerHTML = queries.slice(0,5).map(q=>queryCardHTML(q)).join('');
+  }catch(err){ showToast('❌ Could not load dashboard: '+err.message); }
 }
 
 // ─── PRODUCT TABLE ────────────────────────────────────────────────────────────
-function renderProductsTable(){
-  const prods=getProducts();
-  const tbody=document.getElementById('products-tbody');
-  const empty=document.getElementById('products-empty');
-  document.getElementById('prod-count').textContent=`(${prods.length} products)`;
-  if(!prods.length){tbody.innerHTML='';empty.style.display='block';return;}
-  empty.style.display='none';
-  tbody.innerHTML=prods.map(p=>`
-    <tr>
-      <td><img src="${p.imgBase64||p.img}" alt="${p.name}" onerror="this.style.display='none'"/></td>
-      <td><strong>${p.name}</strong></td>
-      <td><span class="badge badge-blue">${catLabel(p.cat)}</span></td>
-      <td>${p.price||'—'}</td>
-      <td>${p.moq||'—'}</td>
-      <td><span class="badge ${p.status==='active'?'badge-green':'badge-red'}">${p.status==='active'?'Active':'Hidden'}</span></td>
-      <td style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn-edit" onclick="editProduct('${p.id}')">✏️ Edit</button>
-        <button class="btn-danger" onclick="deleteProduct('${p.id}')">🗑 Delete</button>
-      </td>
-    </tr>`).join('');
+async function renderProductsTable(){
+  const tbody = document.getElementById('products-tbody');
+  const empty = document.getElementById('products-empty');
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:#94a3b8;">⏳ Loading from MongoDB…</td></tr>';
+  try{
+    const prods = await SS_API.Products.getAll(true);
+    document.getElementById('prod-count').textContent = `(${prods.length} products)`;
+    if(!prods.length){tbody.innerHTML='';empty.style.display='block';return;}
+    empty.style.display='none';
+    tbody.innerHTML = prods.map(p=>{
+      const imgSrc = p.imgBase64 || (p.imgPath ? 'https://star-safety.vercel.app'+p.imgPath : p.img||'');
+      return`<tr>
+        <td>${imgSrc?`<img src="${imgSrc}" alt="${p.name}"/>`:'<span style="color:#ccc;font-size:1.5rem">🖼️</span>'}</td>
+        <td><strong>${p.name}</strong></td>
+        <td><span class="badge badge-blue">${catLabel(p.cat)}</span></td>
+        <td>${p.price||'—'}</td>
+        <td>${p.moq||'—'}</td>
+        <td><span class="badge ${p.status==='active'?'badge-green':'badge-red'}">${p.status==='active'?'Active':'Hidden'}</span></td>
+        <td style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-edit" onclick="editProduct('${p._id}')">✏️ Edit</button>
+          <button class="btn-danger" onclick="deleteProduct('${p._id}')">🗑 Delete</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }catch(err){
+    tbody.innerHTML=`<tr><td colspan="7" style="color:red;padding:20px;">❌ ${err.message}</td></tr>`;
+  }
 }
-
 function catLabel(c){return{rainwear:'Rainwear',head:'Head Protection',hands:'Hand Protection',visibility:'High Visibility',foot:'Foot Protection',respiratory:'Respiratory',other:'Other'}[c]||c;}
 
 // ─── IMAGE PREVIEW ────────────────────────────────────────────────────────────
-let currentImgBase64='';
+let currentImgBase64 = '';
 function previewImage(input){
   if(!input.files||!input.files[0])return;
-  const reader=new FileReader();
-  reader.onload=function(e){
-    currentImgBase64=e.target.result;
-    document.getElementById('img-preview').src=e.target.result;
-    document.getElementById('img-preview').style.display='block';
-    document.getElementById('img-placeholder').style.display='none';
+  const reader = new FileReader();
+  reader.onload = function(e){
+    currentImgBase64 = e.target.result;
+    document.getElementById('img-preview').src = e.target.result;
+    document.getElementById('img-preview').style.display = 'block';
+    document.getElementById('img-placeholder').style.display = 'none';
   };
   reader.readAsDataURL(input.files[0]);
 }
 
 // ─── SAVE PRODUCT ─────────────────────────────────────────────────────────────
-function saveProduct(e){
+async function saveProduct(e){
   e.preventDefault();
-  const editId=document.getElementById('edit-id').value;
-  const products=getProducts();
-  const prod={
-    id:editId||'p'+Date.now(),
-    name:document.getElementById('f-name').value.trim(),
-    cat:document.getElementById('f-cat').value,
-    price:document.getElementById('f-price').value.trim()||'Contact for Price',
-    moq:document.getElementById('f-moq').value.trim(),
-    material:document.getElementById('f-material').value.trim(),
-    sizes:document.getElementById('f-sizes').value.trim(),
-    colors:document.getElementById('f-colors').value.trim(),
-    cert:document.getElementById('f-cert').value.trim(),
-    desc:document.getElementById('f-desc').value.trim(),
-    features:document.getElementById('f-features').value.trim(),
-    applications:document.getElementById('f-applications').value.trim(),
-    status:document.getElementById('f-status').value,
-    img:'',
-    imgBase64:currentImgBase64,
+  const editId = document.getElementById('edit-id').value;
+  const btn = e.target.querySelector('button[type=submit]');
+  btn.textContent = '⏳ Saving…'; btn.disabled = true;
+  const payload = {
+    name:         document.getElementById('f-name').value.trim(),
+    cat:          document.getElementById('f-cat').value,
+    price:        document.getElementById('f-price').value.trim() || 'Contact for Price',
+    moq:          document.getElementById('f-moq').value.trim(),
+    material:     document.getElementById('f-material').value.trim(),
+    sizes:        document.getElementById('f-sizes').value.trim(),
+    colors:       document.getElementById('f-colors').value.trim(),
+    cert:         document.getElementById('f-cert').value.trim(),
+    desc:         document.getElementById('f-desc').value.trim(),
+    features:     document.getElementById('f-features').value.trim(),
+    applications: document.getElementById('f-applications').value.trim(),
+    status:       document.getElementById('f-status').value,
+    imgBase64:    currentImgBase64,
   };
-  if(editId){
-    const idx=products.findIndex(p=>p.id===editId);
-    if(idx>-1){
-      if(!currentImgBase64)prod.imgBase64=products[idx].imgBase64;
-      prod.img=products[idx].img;
-      products[idx]=prod;
+  try{
+    if(editId){
+      await SS_API.Products.update(editId, payload);
+      showToast('✅ Product updated in MongoDB!');
+    } else {
+      await SS_API.Products.create(payload);
+      showToast('✅ Product added to MongoDB!');
     }
-  } else {
-    products.push(prod);
+    resetForm();
+    showTab('products');
+  }catch(err){
+    showToast('❌ Error: '+err.message);
+  } finally {
+    btn.textContent='💾 Save Product'; btn.disabled=false;
   }
-  saveProducts(products);
-  showToast(editId?'✅ Product updated!':'✅ Product added to catalog!');
-  resetForm();
-  showTab('products');
 }
 
 // ─── RESET FORM ───────────────────────────────────────────────────────────────
 function resetForm(){
   document.getElementById('product-form').reset();
-  document.getElementById('edit-id').value='';
-  document.getElementById('img-preview').style.display='none';
-  document.getElementById('img-placeholder').style.display='block';
-  document.getElementById('add-form-title').textContent='➕ Add New Product';
-  currentImgBase64='';
+  document.getElementById('edit-id').value = '';
+  document.getElementById('img-preview').style.display = 'none';
+  document.getElementById('img-placeholder').style.display = 'block';
+  document.getElementById('add-form-title').textContent = '➕ Add New Product';
+  currentImgBase64 = '';
 }
 
 // ─── EDIT PRODUCT ─────────────────────────────────────────────────────────────
-function editProduct(id){
-  const products=getProducts();
-  const p=products.find(x=>x.id===id);
-  if(!p)return;
-  showTab('add-product');
-  document.getElementById('add-form-title').textContent='✏️ Edit Product: '+p.name;
-  document.getElementById('edit-id').value=p.id;
-  document.getElementById('f-name').value=p.name;
-  document.getElementById('f-cat').value=p.cat;
-  document.getElementById('f-price').value=p.price==='Contact for Price'?'':p.price;
-  document.getElementById('f-moq').value=p.moq;
-  document.getElementById('f-material').value=p.material;
-  document.getElementById('f-sizes').value=p.sizes;
-  document.getElementById('f-colors').value=p.colors;
-  document.getElementById('f-cert').value=p.cert;
-  document.getElementById('f-desc').value=p.desc;
-  document.getElementById('f-features').value=p.features;
-  document.getElementById('f-applications').value=p.applications;
-  document.getElementById('f-status').value=p.status;
-  const imgSrc=p.imgBase64||p.img;
-  if(imgSrc){
-    document.getElementById('img-preview').src=imgSrc;
-    document.getElementById('img-preview').style.display='block';
-    document.getElementById('img-placeholder').style.display='none';
-    currentImgBase64=p.imgBase64||'';
-  }
-  window.scrollTo({top:0,behavior:'smooth'});
+async function editProduct(id){
+  try{
+    const p = await SS_API.Products.getById(id);
+    showTab('add-product');
+    document.getElementById('add-form-title').textContent = '✏️ Edit: '+p.name;
+    document.getElementById('edit-id').value   = p._id;
+    document.getElementById('f-name').value    = p.name;
+    document.getElementById('f-cat').value     = p.cat;
+    document.getElementById('f-price').value   = p.price==='Contact for Price'?'':p.price;
+    document.getElementById('f-moq').value     = p.moq;
+    document.getElementById('f-material').value= p.material;
+    document.getElementById('f-sizes').value   = p.sizes;
+    document.getElementById('f-colors').value  = p.colors;
+    document.getElementById('f-cert').value    = p.cert;
+    document.getElementById('f-desc').value    = p.desc;
+    document.getElementById('f-features').value= p.features;
+    document.getElementById('f-applications').value = p.applications;
+    document.getElementById('f-status').value  = p.status;
+    const imgSrc = p.imgBase64 || p.img || '';
+    if(imgSrc){
+      document.getElementById('img-preview').src = imgSrc;
+      document.getElementById('img-preview').style.display = 'block';
+      document.getElementById('img-placeholder').style.display = 'none';
+      currentImgBase64 = p.imgBase64 || '';
+    }
+    window.scrollTo({top:0,behavior:'smooth'});
+  }catch(err){ showToast('❌ '+err.message); }
 }
-
 function closeEdit(){document.getElementById('edit-overlay').classList.remove('open');}
 
 // ─── DELETE PRODUCT ───────────────────────────────────────────────────────────
-function deleteProduct(id){
-  if(!confirm('Are you sure you want to delete this product? This will also remove it from the website.'))return;
-  const products=getProducts().filter(p=>p.id!==id);
-  saveProducts(products);
-  renderProductsTable();
-  renderDashboard();
-  showToast('🗑 Product deleted from catalog.');
+async function deleteProduct(id){
+  if(!confirm('Delete this product from MongoDB? This cannot be undone.'))return;
+  try{
+    await SS_API.Products.delete(id);
+    renderProductsTable();
+    renderDashboard();
+    showToast('🗑 Product deleted from MongoDB.');
+  }catch(err){ showToast('❌ '+err.message); }
 }
 
-// ─── QUERIES ─────────────────────────────────────────────────────────────────
+// ─── ENQUIRIES ────────────────────────────────────────────────────────────────
 function queryCardHTML(q){
-  return`<div class="query-card" id="qc-${q.id}">
+  const t = q.createdAt ? new Date(q.createdAt).toLocaleString('en-IN') : (q.time||'');
+  const id = q._id || q.id;
+  return`<div class="query-card" id="qc-${id}">
     <div class="q-header">
       <div>
         <div class="q-name">${q.name||'Unknown'} ${q.company?'– '+q.company:''}</div>
-        <div class="q-time">📅 ${q.time} &nbsp;|&nbsp; 📞 ${q.phone||'Not provided'}</div>
+        <div class="q-time">📅 ${t} &nbsp;|&nbsp; 📞 ${q.phone||'Not provided'}</div>
       </div>
       <div style="display:flex;gap:6px;align-items:center;">
         ${q.unread?'<span class="badge badge-red">New</span>':'<span class="badge badge-gray">Read</span>'}
-        <button class="btn-danger" style="padding:4px 10px;" onclick="deleteQuery('${q.id}')">🗑</button>
+        <button class="btn-danger" style="padding:4px 10px;" onclick="deleteQuery('${id}')">🗑</button>
       </div>
     </div>
     <div class="q-detail">
@@ -564,64 +560,65 @@ function queryCardHTML(q){
     </div>
     <div class="q-tags">
       <span class="badge badge-blue">${q.type||'Contact'}</span>
-      ${q.unread?`<button class="badge badge-yellow" style="cursor:pointer;border:none;" onclick="markRead('${q.id}')">✓ Mark Read</button>`:''}
+      ${q.unread?`<button class="badge badge-yellow" style="cursor:pointer;border:none;" onclick="markRead('${id}')">✓ Mark Read</button>`:''}
       ${q.phone?`<a href="tel:${q.phone}" class="badge badge-green" style="text-decoration:none;">📞 Call</a>`:''}
-      ${q.phone?`<a href="https://wa.me/91${q.phone.replace(/\D/g,'')}?text=Hello%20${encodeURIComponent(q.name||'')}%2C%20Thank%20you%20for%20your%20enquiry%20at%20Star%20Safety!" target="_blank" class="badge" style="background:#d1fae5;color:#065f46;text-decoration:none;">💬 Reply WhatsApp</a>`:''}
+      ${q.phone?`<a href="https://wa.me/91${(q.phone||'').replace(/\D/g,'')}?text=Hello%20${encodeURIComponent(q.name||'')}%2C%20Thank%20you%20for%20enquiring%20at%20Star%20Safety!" target="_blank" class="badge" style="background:#d1fae5;color:#065f46;text-decoration:none;">💬 Reply WhatsApp</a>`:''}
     </div>
   </div>`;
 }
 
-function renderQueries(){
-  const queries=getQueries().slice().reverse();
-  document.getElementById('queries-count').textContent=`(${queries.length} total)`;
-  const container=document.getElementById('queries-container');
-  if(!queries.length){container.innerHTML='<div class="empty"><div class="icon">📭</div><p>No enquiries yet. They appear here when customers submit forms on the website.</p></div>';return;}
-  container.innerHTML=queries.map(q=>queryCardHTML(q)).join('');
+async function renderQueries(){
+  const container = document.getElementById('queries-container');
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;">⏳ Loading from MongoDB…</div>';
+  try{
+    const queries = await SS_API.Enquiries.getAll();
+    document.getElementById('queries-count').textContent = `(${queries.length} total)`;
+    if(!queries.length){
+      container.innerHTML='<div class="empty"><div class="icon">📭</div><p>No enquiries yet.</p></div>';
+      return;
+    }
+    container.innerHTML = queries.map(q=>queryCardHTML(q)).join('');
+  }catch(err){
+    container.innerHTML=`<div style="color:red;padding:20px;">❌ ${err.message}</div>`;
+  }
 }
 
-function markRead(id){
-  const queries=getQueries();
-  const q=queries.find(x=>x.id===id);
-  if(q)q.unread=false;
-  saveQueries(queries);
-  renderQueries();
-  renderDashboard();
+async function markRead(id){
+  try{ await SS_API.Enquiries.markRead(id); renderQueries(); renderDashboard(); }
+  catch(err){ showToast('❌ '+err.message); }
 }
 
-function deleteQuery(id){
-  if(!confirm('Delete this enquiry?'))return;
-  saveQueries(getQueries().filter(q=>q.id!==id));
-  renderQueries();
-  renderDashboard();
-  showToast('🗑 Enquiry deleted.');
+async function deleteQuery(id){
+  if(!confirm('Delete this enquiry from MongoDB?'))return;
+  try{
+    await SS_API.Enquiries.delete(id);
+    renderQueries(); renderDashboard();
+    showToast('🗑 Enquiry deleted.');
+  }catch(err){ showToast('❌ '+err.message); }
 }
 
-function clearAllQueries(){
+async function clearAllQueries(){
   if(!confirm('Delete ALL enquiries? This cannot be undone.'))return;
-  saveQueries([]);
-  renderQueries();
-  renderDashboard();
-  showToast('🗑 All enquiries cleared.');
+  try{
+    await SS_API.Enquiries.clearAll();
+    renderQueries(); renderDashboard();
+    showToast('🗑 All enquiries cleared.');
+  }catch(err){ showToast('❌ '+err.message); }
 }
 
-// ─── TOAST ────────────────────────────────────────────────────────────────────
-function showToast(msg){
-  const t=document.getElementById('admin-toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3200);
-}
+// ─── AUTO REFRESH badge every 15s ─────────────────────────────────────────────
+setInterval(async()=>{
+  try{
+    const s = await SS_API.Stats.get();
+    const badge = document.getElementById('query-badge');
+    document.getElementById('stat-new').textContent = s.unreadEnquiries;
+    if(s.unreadEnquiries>0){badge.textContent=s.unreadEnquiries;badge.style.display='inline';}
+    else badge.style.display='none';
+  }catch(_){}
+}, 15000);
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 renderDashboard();
-
-// ─── SYNC FROM MAIN SITE (check for new queries every 3s) ─────────────────────
-setInterval(()=>{
-  const unread=getQueries().filter(q=>q.unread).length;
-  const badge=document.getElementById('query-badge');
-  if(unread>0){badge.textContent=unread;badge.style.display='inline';}
-  else badge.style.display='none';
-  document.getElementById('stat-new').textContent=unread;
-},3000);
 </script>
 </body>
 </html>
